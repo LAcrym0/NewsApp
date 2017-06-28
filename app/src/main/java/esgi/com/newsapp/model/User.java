@@ -1,6 +1,5 @@
 package esgi.com.newsapp.model;
 
-import esgi.com.newsapp.network.Exclude;
 
 /**
  * Created by Grunt on 28/06/2017.

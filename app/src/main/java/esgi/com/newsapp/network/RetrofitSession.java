@@ -16,9 +16,11 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitSession {
 
+    //API BASE URL
     private static String BASE_URL = "https://esgi-2017.herokuapp.com/";
     private static Gson gson;
     private Retrofit retrofit;
+    //init once with private constructor
     private static final RetrofitSession INSTANCE = new RetrofitSession();
     private UserService userService;
 
@@ -57,37 +59,32 @@ public class RetrofitSession {
         return gson;
     }
 
+    //private constructor to avoid calling it outside the class
     private RetrofitSession() {
         this.initRetrofitClient();
     }
 
+    //method to call to get the instance of RetrofitSession
     public static RetrofitSession getInstance() {
         return INSTANCE;
     }
 
+    //retrofit init
     private void initRetrofitClient() {
-        // clean old retrofit client if exists
+        //clean old retrofit client if exists
         if (this.retrofit != null) {
             this.retrofit = null;
         }
 
         Retrofit.Builder retrofitBuilder = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create(getGson()))
-                .client(new OkHttpClient.Builder().addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BASIC)).build());
-
-        //todo auth
-        /*String authToken = PreferenceHelper.getInstance().getToken();
-        if (authToken != null) {
-            OkHttpClient okHttpClient = new OkHttpClient();
-            okHttpClient.interceptors().add(new AuthTokenHeaderInterceptor());
-            retrofitBuilder.client(okHttpClient);
-        }*/
+                .baseUrl(BASE_URL)//set URL
+                .addConverterFactory(GsonConverterFactory.create(getGson()))//add json util
+                .client(new OkHttpClient.Builder().addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BASIC)).build());//add logs
 
         this.retrofit = retrofitBuilder.build();
         this.userService = new UserService(this.retrofit);
     }
-
+    
     public UserService getUserService() {
         return userService;
     }
