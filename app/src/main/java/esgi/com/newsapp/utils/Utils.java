@@ -1,4 +1,4 @@
-package esgi.com.newsapp.Utils;
+package esgi.com.newsapp.utils;
 
 import android.annotation.SuppressLint;
 import android.content.Context;

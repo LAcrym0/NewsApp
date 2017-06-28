@@ -2,7 +2,7 @@ package esgi.com.newsapp.application;
 
 import android.app.Application;
 
-import esgi.com.newsapp.Utils.Utils;
+import esgi.com.newsapp.utils.Utils;
 
 /**
  * Created by Grunt on 28/06/2017.

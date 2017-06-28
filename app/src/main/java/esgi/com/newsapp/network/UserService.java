@@ -3,8 +3,8 @@ package esgi.com.newsapp.network;
 import android.util.Log;
 
 import esgi.com.newsapp.R;
-import esgi.com.newsapp.Utils.Network;
-import esgi.com.newsapp.Utils.Utils;
+import esgi.com.newsapp.utils.Network;
+import esgi.com.newsapp.utils.Utils;
 import esgi.com.newsapp.model.User;
 import retrofit2.Call;
 import retrofit2.Callback;
