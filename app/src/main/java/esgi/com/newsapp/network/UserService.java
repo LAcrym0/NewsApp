@@ -47,7 +47,6 @@ public class UserService {
                         Log.d(getClass().getSimpleName(), "token : " + response.body());
                         String token = response.body();
                         callback.success(token);
-
                     } else {
                         callback.error(statusCode, response.message());
                     }
@@ -83,9 +82,12 @@ public class UserService {
                     System.out.println("Return code : " + statusCode);
                     if (statusCode == HTTP_201) {
                         Log.d(getClass().getSimpleName(), "Return code : " + response.body());
+                        Log.d(getClass().getSimpleName(), "Account created");
                         Void value = response.body();
                         callback.success(value);
-
+                    } else if (statusCode == HTTP_200){
+                        Log.d(getClass().getSimpleName(), "Account already existing");
+                        callback.error(statusCode, response.message());
                     } else {
                         callback.error(statusCode, response.message());
                     }

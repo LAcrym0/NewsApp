@@ -2,6 +2,7 @@ package esgi.com.newsapp.application;
 
 import android.app.Application;
 
+import esgi.com.newsapp.utils.PreferencesHelper;
 import esgi.com.newsapp.utils.Utils;
 
 /**
@@ -13,5 +14,6 @@ public class NewsApplication extends Application {
     public void onCreate() {
         super.onCreate();
         Utils.init(this);
+        PreferencesHelper.getInstance().init(this);
     }
 }

@@ -84,7 +84,7 @@ public class RetrofitSession {
         this.retrofit = retrofitBuilder.build();
         this.userService = new UserService(this.retrofit);
     }
-    
+
     public UserService getUserService() {
         return userService;
     }

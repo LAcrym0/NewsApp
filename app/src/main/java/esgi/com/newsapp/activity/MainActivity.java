@@ -1,12 +1,13 @@
 package esgi.com.newsapp.activity;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 
 import esgi.com.newsapp.R;
 import esgi.com.newsapp.model.User;
 import esgi.com.newsapp.network.ApiResult;
 import esgi.com.newsapp.network.RetrofitSession;
+import esgi.com.newsapp.utils.PreferencesHelper;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -28,15 +29,14 @@ public class MainActivity extends AppCompatActivity {
                 System.out.println(message);
             }
         });
-
-
     }
 
     private void login(User user) {
         RetrofitSession.getInstance().getUserService().login(user, new ApiResult<String>() {
             @Override
-            public void success(String res) {
-                System.out.println(res);
+            public void success(String token) {
+                System.out.println(token);
+                PreferencesHelper.getInstance().setToken(token);
             }
 
             @Override
