@@ -5,6 +5,7 @@ import android.util.Log;
 import java.util.List;
 
 import esgi.com.newsapp.R;
+import esgi.com.newsapp.model.Auth;
 import esgi.com.newsapp.utils.Network;
 import esgi.com.newsapp.utils.PreferencesHelper;
 import esgi.com.newsapp.utils.Utils;
@@ -36,12 +37,12 @@ public class UserService {
 
     /**
      * Method used to login
-     * @param user the user to log in
+     * @param auth the user's credentiels to log in
      * @param callback the callback that returns the token string for a success or the return code + message for a failure
      */
-    public void login(User user, final ApiResult<String> callback) {
+    public void login(Auth auth, final ApiResult<String> callback) {
         if (Network.isConnectionAvailable()) {
-            Call<String> call = this.userService.login(user);
+            Call<String> call = this.userService.login(auth);
             call.enqueue(new Callback<String>() {
                 @Override
                 public void onResponse(Call<String> call, Response<String> response) {

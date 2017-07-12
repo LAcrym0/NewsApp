@@ -1,4 +1,25 @@
 <resources>
     <string name="app_name">NewsApp</string>
     <string name="error_network_not_available">error network not available</string>
+
+    <string name="login_activity_email">Login</string>
+    <string name="login_activity_password">Mot de passe</string>
+    <string name="login_activity_login">Se connecter</string>
+    <string name="login_activity_signup">S\'inscrire</string>
+
+    <string name="lastname">Nom</string>
+    <string name="firstname">Prénom</string>
+    <string name="email">Email</string>
+    <string name="password">Mot de passe</string>
+    <string name="subscribe">Créer le compte</string>
+
+    <string name="nav_news">News</string>
+    <string name="nav_topics">Topics</string>
+    <string name="nav_my_account">Account</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="bundle_news_id">NEWSID</string>
+    <string name="bundle_news_title">NEWSTITLE</string>
 </resources>

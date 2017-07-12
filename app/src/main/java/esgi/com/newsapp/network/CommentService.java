@@ -110,6 +110,40 @@ public class CommentService {
      * Method used to get comments
      * @param callback the callback that returns nothing for a success or the return code + message for a failure
      */
+    public void getCommentsForNews(String id, final ApiResult<List<Comment>> callback) {
+        if (Network.isConnectionAvailable()) {
+            String criteria = "{\"offset\":0, \"where\":{\"news\":\"" + id + "\"}}";
+            Call<List<Comment>> call = this.commentService.getCommentsForNews("Bearer " + PreferencesHelper.getInstance().getToken(), criteria);
+            call.enqueue(new Callback<List<Comment>>() {
+                @Override
+                public void onResponse(Call<List<Comment>> call, Response<List<Comment>> response) {
+                    int statusCode = response.code();
+                    System.out.println("Return code : " + statusCode);
+                    if (statusCode == HTTP_200) {
+                        Log.d(getClass().getSimpleName(), "Return content : " + response.body());
+                        Log.d(getClass().getSimpleName(), "Got comment");
+                        List<Comment> values = response.body();
+                        callback.success(values);
+                    } else {
+                        callback.error(statusCode, response.message());
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<List<Comment>> call, Throwable t) {
+                    Log.e("CommentService", "Error while calling the 'getComment' method !", t);
+                    callback.error(-1, t.getLocalizedMessage());
+                }
+            });
+        } else {
+            onConnectionError(callback);
+        }
+    }
+
+    /**
+     * Method used to get comments
+     * @param callback the callback that returns nothing for a success or the return code + message for a failure
+     */
     public void getCommentsList(final ApiResult<List<Comment>> callback) {
         if (Network.isConnectionAvailable()) {
             Call<List<Comment>> call = this.commentService.getCommentsList("Bearer " + PreferencesHelper.getInstance().getToken());

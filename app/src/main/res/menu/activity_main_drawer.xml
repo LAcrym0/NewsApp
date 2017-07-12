@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/main_nav_news"
+            android:title="@string/nav_news"/>
+        <item
+            android:id="@+id/main_nav_my_scale"
+            android:title="@string/nav_topics"/>
+        <item
+            android:id="@+id/main_nav_my_account"
+            android:title="@string/nav_my_account"/>
+    </group>
+
+</menu>

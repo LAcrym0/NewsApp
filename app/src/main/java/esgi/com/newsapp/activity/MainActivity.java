@@ -1,227 +1,184 @@
 package esgi.com.newsapp.activity;
 
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
+import android.widget.FrameLayout;
 
-import java.util.List;
-
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import esgi.com.newsapp.R;
-import esgi.com.newsapp.model.Comment;
-import esgi.com.newsapp.model.News;
-import esgi.com.newsapp.model.Post;
-import esgi.com.newsapp.model.Topic;
-import esgi.com.newsapp.model.User;
-import esgi.com.newsapp.network.ApiResult;
-import esgi.com.newsapp.network.RetrofitSession;
-import esgi.com.newsapp.utils.DateConverter;
-import esgi.com.newsapp.utils.PreferencesHelper;
+import esgi.com.newsapp.fragment.NewsFragment;
+import esgi.com.newsapp.fragment.RootFragment;
+import esgi.com.newsapp.fragment.RootStackFragment;
 
-public class MainActivity extends AppCompatActivity {
+/**
+ * Created by Grunt on 12/07/2017.
+ */
 
-    private Topic topic = new Topic("Premier essai", "Tentative de la fatigue", DateConverter.getCurrentFormattedDate());
-    private Post post = new Post("Premier post du premier essai", "En effet, la fatigue est présente", "", DateConverter.getCurrentFormattedDate());
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, RootFragment.Interface {
+
+    @BindView(R.id.main_act_toolbar)
+    Toolbar toolbar;
+
+    @BindView(R.id.main_act_frame_content)
+    FrameLayout frameContent;
+
+    NewsFragment newsFragment;
+
+    public final FragmentManager.OnBackStackChangedListener onBackStackChangedListener = new FragmentManager.OnBackStackChangedListener() {
+        @Override
+        public void onBackStackChanged() {
+            if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
+                clearFragmentsStack();
+            } else {
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            }
+
+            Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main_act_frame_content);
+            if (fragment instanceof RootFragment) {
+                setTitle(((RootFragment) fragment).getTitle());
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        final User user = new User("test127@digipolitan.com", "testcréationtest", "UnMarabout", "BarbuBreton");
-        System.out.println("Launching");
+        ButterKnife.bind(this);
+        setSupportActionBar(toolbar);
 
-        /*RetrofitSession.getInstance().getUserService().createAccount(user, new ApiResult<Void>() {
-            @Override
-            public void success(Void res) {
-                login(user);
-            }
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
 
-            @Override
-            public void error(int code, String message) {
-                System.out.println(message);
-            }
-        });*/
-        login(user);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+
+        newsFragment = NewsFragment.newInstance();
+
+        navigationView.setCheckedItem(R.id.main_nav_news);
+        onNavigationItemSelected(navigationView.getMenu().getItem(0));
     }
 
-    private void login(User user) {
-        RetrofitSession.getInstance().getUserService().login(user, new ApiResult<String>() {
-            @Override
-            public void success(String token) {
-                System.out.println(token);
-                //getUserInfo(); //OK
-                //getUsersList(); //OK
-                //createTopic(topic);
-                getTopics();
-                /*getPosts();
-                getNews();
-                getComments();*/
-            }
-
-            @Override
-            public void error(int code, String message) {
-                System.out.println(message);
-            }
-        });
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getSupportFragmentManager().addOnBackStackChangedListener(onBackStackChangedListener);
     }
 
-    private void getUserInfo() {
-        RetrofitSession.getInstance().getUserService().getMyInformation(new ApiResult<User>() {
-            @Override
-            public void success(User user) {
-                //System.out.println(token);
-                user.setFirstname("Toto le testeur");
-                editUser(user);
-            }
-
-            @Override
-            public void error(int code, String message) {
-                System.out.println(message);
-            }
-        });
+    @Override
+    public boolean onOptionsItemSelected(MenuItem menuItem) {
+        if (menuItem.getItemId() == android.R.id.home) {
+            onBackPressed();
+        }
+        return super.onOptionsItemSelected(menuItem);
     }
 
-    private void getUsersList() {
-        RetrofitSession.getInstance().getUserService().getUsersList(new ApiResult<List<User>>() {
-            @Override
-            public void success(List<User> users) {
-                //System.out.println(token);
-                /*for (User user : users)
-                    System.out.println(user.getEmail());*///verification OK
-            }
-
-            @Override
-            public void error(int code, String message) {
-                System.out.println(message);
-            }
-        });
+    @Override
+    protected void onPause() {
+        super.onPause();
+        getSupportFragmentManager().removeOnBackStackChangedListener(onBackStackChangedListener);
     }
 
-    private void editUser(User user) {
-        RetrofitSession.getInstance().getUserService().editUser(user, new ApiResult<User>() {
-            @Override
-            public void success(User editedUser) {
-                System.out.println(editedUser.getFirstname());
-            }
-
-            @Override
-            public void error(int code, String message) {
-                System.out.println(message);
-            }
-        });
-    }
-
-    private void getComments() {
-        RetrofitSession.getInstance().getCommentService().getCommentsList(new ApiResult<List<Comment>>() {
-            @Override
-            public void success(List<Comment> res) {
-
-            }
-
-            @Override
-            public void error(int code, String message) {
-
-            }
-        });
-    }
-
-    private void getNews() {
-        RetrofitSession.getInstance().getNewsService().getNewsList(new ApiResult<List<News>>() {
-            @Override
-            public void success(List<News> res) {
-
-            }
-
-            @Override
-            public void error(int code, String message) {
-
-            }
-        });
-    }
-
-    private void getPosts() {
-        RetrofitSession.getInstance().getPostService().getPostList(new ApiResult<List<Post>>() {
-            @Override
-            public void success(List<Post> res) {
-                for (Post post : res) {
-                    System.out.println(post.getContent());
-                    System.out.println(post.getAuthor());
-                    System.out.println(post.getId());
-                    System.out.println(post.getDate());
-                    System.out.println(post.getTitle());
-                    System.out.println(post.getTopic());
-                    System.out.println("------");
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        }  else {
+            if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+                Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main_act_frame_content);
+                if (fragment != null && fragment instanceof RootStackFragment) {
+                    if (!((RootStackFragment) fragment).consumeBackPressed()) {
+                        popFragment();
+                    }
+                } else {
+                    popFragment();
                 }
-                getPost(res.get(res.size() - 1).getId());
+            } else {
+                moveTaskToBack(true);
             }
-
-            @Override
-            public void error(int code, String message) {
-
-            }
-        });
+        }
     }
 
-    private void getTopics() {
-        RetrofitSession.getInstance().getTopicService().getTopicList(new ApiResult<List<Topic>>() {
-            @Override
-            public void success(List<Topic> res) {
-                post.setTopic(res.get(res.size() - 1).getId());
-                createPost(post);
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        RootFragment fragment = null;
+        if (id == R.id.main_nav_news) {
+            fragment = newsFragment;
+        }
+
+        if (fragment != null) {
+            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+            drawer.closeDrawer(GravityCompat.START);
+            clearFragmentsStack();
+
+
+            Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.main_act_frame_content);
+            if (currentFragment != null) {
+                getSupportFragmentManager().beginTransaction().remove(currentFragment).commit();
             }
 
-            @Override
-            public void error(int code, String message) {
+            getSupportFragmentManager().beginTransaction()
+                    .setCustomAnimations(R.anim.transition_in_enter, R.anim.transition_in_exit, R.anim.transition_out_enter, R.anim.transition_out_exit)
+                    .replace(R.id.main_act_frame_content, fragment)
+                    .commit();
 
-            }
-        });
+            //setTitle(fragment.getTitle());
+            return true;
+        }
+
+        return false;
     }
 
-    private void createTopic(Topic topic) {
-        System.out.println("DATE : " + topic.getDate());
-        RetrofitSession.getInstance().getTopicService().createTopic(topic, new ApiResult<Void>() {
-            @Override
-            public void success(Void res) {
-                getTopics();
-            }
-
-            @Override
-            public void error(int code, String message) {
-                System.out.println("Error while creating the topic");
-            }
-        });
+    @Override
+    public MainActivity getMainActivity() {
+        return this;
     }
 
-    private void createPost(Post post) {
-        RetrofitSession.getInstance().getPostService().createPost(post, new ApiResult<Void>() {
-            @Override
-            public void success(Void res) {
-                getPosts();
-            }
-
-            @Override
-            public void error(int code, String message) {
-                System.out.println("Error while creating the topic");
-            }
-        });
+    public void pushFragment(RootFragment rootFragment, RootStackFragment rootStackFragment) {
+        getSupportFragmentManager().beginTransaction()
+                .setCustomAnimations(R.anim.transition_in_enter, R.anim.transition_in_exit, R.anim.transition_out_enter, R.anim.transition_out_exit)
+                .add(R.id.main_act_frame_content, rootStackFragment)
+                .addToBackStack(null)
+                .commit();
     }
 
-    private void getPost(String id) {
-        RetrofitSession.getInstance().getPostService().getPost(id, new ApiResult<Post>() {
-            @Override
-            public void success(Post post) {
-                System.out.println("------");
-                System.out.println(post.getContent());
-                System.out.println(post.getAuthor());
-                System.out.println(post.getId());
-                System.out.println(post.getDate());
-                System.out.println(post.getTitle());
-                System.out.println(post.getTopic());
-                System.out.println("------");
-            }
+    public void clearFragmentsStack() {
+        getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+    }
 
-            @Override
-            public void error(int code, String message) {
-                System.out.println("Error while creating the topic");
+    public void finishFragment(RootStackFragment fragment) {
+        if (getSupportFragmentManager().findFragmentById(R.id.main_act_frame_content) == fragment) {
+            popFragment();
+        }
+    }
+
+    private void popFragment() {
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main_act_frame_content);
+        if (fragment instanceof RootStackFragment) {
+            Fragment targetFragment = fragment.getTargetFragment();
+            if (targetFragment instanceof RootStackFragment) {
+                ((RootStackFragment) targetFragment).onFragmentResult(fragment.getTargetRequestCode(), ((RootStackFragment) fragment).getResult());
             }
-        });
+        }
+        //Util.closeKeyboard(this);
+        getSupportFragmentManager().popBackStack();
     }
 }

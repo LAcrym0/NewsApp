@@ -2,6 +2,7 @@ package esgi.com.newsapp.network;
 
 import java.util.List;
 
+import esgi.com.newsapp.model.Auth;
 import esgi.com.newsapp.model.User;
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -18,7 +19,7 @@ import retrofit2.http.PUT;
 public interface IUserService {
     @POST("/auth/login/")
     @Headers("Content-Type: application/json")
-    Call<String> login(@Body User user);
+    Call<String> login(@Body Auth auth);
 
     @POST("/auth/subscribe/")
     @Headers("Content-Type: application/json")
