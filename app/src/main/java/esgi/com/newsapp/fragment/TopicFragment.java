@@ -22,100 +22,100 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import esgi.com.newsapp.R;
-import esgi.com.newsapp.adapter.NewsAdapter;
-import esgi.com.newsapp.model.News;
+import esgi.com.newsapp.adapter.TopicAdapter;
+import esgi.com.newsapp.model.Topic;
 import esgi.com.newsapp.network.ApiResult;
 import esgi.com.newsapp.network.RetrofitSession;
 
-public class NewsFragment extends RootFragment {
+public class TopicFragment extends RootFragment {
 
     @BindView(R.id.progress)
     public ProgressBar progressBar;
 
-    @BindView(R.id.rv_news)
-    public RecyclerView rvNews;
+    @BindView(R.id.rv_topics)
+    public RecyclerView rvTopics;
 
     @BindView(R.id.fab)
     public FloatingActionButton fab;
 
-    @BindView(R.id.srl_news)
-    public SwipeRefreshLayout swipeRefreshLayoutNews;
+    @BindView(R.id.srl_topic)
+    public SwipeRefreshLayout swipeRefreshLayoutTopic;
 
-    private List<News> newsList;
-    private NewsAdapter adapter;
+    private List<Topic> topicsList;
+    private TopicAdapter adapter;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        View view = inflater.inflate(R.layout.fragment_news, container, false);
+        View view = inflater.inflate(R.layout.fragment_topic, container, false);
         ButterKnife.bind(this, view);
 
-        rvNews.setHasFixedSize(true);
+        rvTopics.setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
-        rvNews.setLayoutManager(llm);
+        rvTopics.setLayoutManager(llm);
 
         setUpGestureListener();
 
-        swipeRefreshLayoutNews.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        swipeRefreshLayoutTopic.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                getNewsList();
+                getTopicsList();
             }
         });
 
-        getNewsList();
+        getTopicsList();
 
         return view;
     }
 
-    public static NewsFragment newInstance() {
+    public static TopicFragment newInstance() {
         Bundle args = new Bundle();
-        NewsFragment fragment = new NewsFragment();
+        TopicFragment fragment = new TopicFragment();
         fragment.setArguments(args);
         return fragment;
     }
 
-    private void getNewsList() {
-        RetrofitSession.getInstance().getNewsService().getNewsList(new ApiResult<List<News>>() {
+    private void getTopicsList() {
+        RetrofitSession.getInstance().getTopicService().getTopicList(new ApiResult<List<Topic>>() {
             @Override
-            public void success(List<News> res) {
-                newsList = res;
-                rvNews.setVisibility(View.VISIBLE);
+            public void success(List<Topic> res) {
+                topicsList = res;
+                rvTopics.setVisibility(View.VISIBLE);
                 progressBar.setVisibility(View.GONE);
-                adapter = new NewsAdapter(getContext(), newsList);
-                rvNews.setAdapter(adapter);
-                if (swipeRefreshLayoutNews.isRefreshing())
-                    swipeRefreshLayoutNews.setRefreshing(false);
+                adapter = new TopicAdapter(topicsList);
+                rvTopics.setAdapter(adapter);
+                if (swipeRefreshLayoutTopic.isRefreshing())
+                    swipeRefreshLayoutTopic.setRefreshing(false);
             }
 
             @Override
             public void error(int code, String message) {
                 progressBar.setVisibility(View.GONE);
-                if (swipeRefreshLayoutNews.isRefreshing())
-                    swipeRefreshLayoutNews.setRefreshing(false);
+                if (swipeRefreshLayoutTopic.isRefreshing())
+                    swipeRefreshLayoutTopic.setRefreshing(false);
             }
         });
     }
 
     private void displayNews(int position) {
         FragmentManager fm = getActivity().getSupportFragmentManager();
-        Fragment displayNewsFragment = new DisplayNewsFragment();
+        Fragment displayTopicFragment = new DisplayTopicFragment();
         FragmentTransaction transaction = fm.beginTransaction();
         Bundle bundle = new Bundle();
-        bundle.putString(getString(R.string.bundle_news_id), newsList.get(position).getId());
-        bundle.putString(getString(R.string.bundle_news_title), newsList.get(position).getTitle());
-        bundle.putString(getString(R.string.bundle_news_content), newsList.get(position).getContent());
-        displayNewsFragment.setArguments(bundle);
-        transaction.addToBackStack(null).replace(R.id.main_act_frame_content, displayNewsFragment, DisplayNewsFragment.DISPLAY_NEWS_TAG);
+        bundle.putString(getString(R.string.bundle_topic_id), topicsList.get(position).getId());
+        bundle.putString(getString(R.string.bundle_topic_title), topicsList.get(position).getTitle());
+        bundle.putString(getString(R.string.bundle_topic_content), topicsList.get(position).getContent());
+        displayTopicFragment.setArguments(bundle);
+        transaction.addToBackStack(null).replace(R.id.main_act_frame_content, displayTopicFragment, DisplayTopicFragment.DISPLAY_TOPIC_TAG);
         transaction.commit();
     }
 
     private class RecyclerViewOnGestureListener extends GestureDetector.SimpleOnGestureListener {
         @Override
         public boolean onSingleTapConfirmed(MotionEvent e) {
-            View view = rvNews.findChildViewUnder(e.getX(), e.getY());
-            int position = rvNews.getChildLayoutPosition(view);
+            View view = rvTopics.findChildViewUnder(e.getX(), e.getY());
+            int position = rvTopics.getChildLayoutPosition(view);
             if (position != -1)//security for click out of bounds
                 displayNews(position);
             return super.onSingleTapConfirmed(e);
@@ -123,8 +123,8 @@ public class NewsFragment extends RootFragment {
     }
 
     private void setUpGestureListener() {
-        final GestureDetectorCompat detector = new GestureDetectorCompat(getActivity(), new NewsFragment.RecyclerViewOnGestureListener());
-        rvNews.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
+        final GestureDetectorCompat detector = new GestureDetectorCompat(getActivity(), new TopicFragment.RecyclerViewOnGestureListener());
+        rvTopics.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
             @Override
             public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
                 detector.onTouchEvent(e);

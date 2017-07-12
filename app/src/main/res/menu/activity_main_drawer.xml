@@ -6,7 +6,7 @@
             android:id="@+id/main_nav_news"
             android:title="@string/nav_news"/>
         <item
-            android:id="@+id/main_nav_my_scale"
+            android:id="@+id/main_nav_topic"
             android:title="@string/nav_topics"/>
         <item
             android:id="@+id/main_nav_my_account"

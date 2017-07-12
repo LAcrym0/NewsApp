@@ -12,14 +12,22 @@
     <string name="email">Email</string>
     <string name="password">Mot de passe</string>
     <string name="subscribe">Créer le compte</string>
+    <string name="edit">Modifier</string>
 
     <string name="nav_news">News</string>
     <string name="nav_topics">Topics</string>
     <string name="nav_my_account">Account</string>
+
+    <string name="error_getting_information">Erreur de récupération du compte</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="bundle_news_id">NEWSID</string>
     <string name="bundle_news_title">NEWSTITLE</string>
+    <string name="bundle_news_content">NEWSCONTENT</string>
+
+    <string name="bundle_topic_id">TOPICID</string>
+    <string name="bundle_topic_title">TOPICTITLE</string>
+    <string name="bundle_topic_content">TOPICCONTENT</string>
 </resources>

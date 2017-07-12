@@ -16,9 +16,12 @@ import android.widget.FrameLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import esgi.com.newsapp.R;
+import esgi.com.newsapp.fragment.EditUserFragment;
 import esgi.com.newsapp.fragment.NewsFragment;
 import esgi.com.newsapp.fragment.RootFragment;
 import esgi.com.newsapp.fragment.RootStackFragment;
+import esgi.com.newsapp.fragment.TopicFragment;
+import esgi.com.newsapp.model.Topic;
 
 /**
  * Created by Grunt on 12/07/2017.
@@ -33,6 +36,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     FrameLayout frameContent;
 
     NewsFragment newsFragment;
+    EditUserFragment editUserFragment;
+    TopicFragment topicFragment;
 
     public final FragmentManager.OnBackStackChangedListener onBackStackChangedListener = new FragmentManager.OnBackStackChangedListener() {
         @Override
@@ -67,6 +72,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setNavigationItemSelectedListener(this);
 
         newsFragment = NewsFragment.newInstance();
+        editUserFragment = EditUserFragment.newInstance();
+        topicFragment = TopicFragment.newInstance();
 
         navigationView.setCheckedItem(R.id.main_nav_news);
         onNavigationItemSelected(navigationView.getMenu().getItem(0));
@@ -121,6 +128,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         RootFragment fragment = null;
         if (id == R.id.main_nav_news) {
             fragment = newsFragment;
+        } else if (id == R.id.main_nav_my_account) {
+            fragment = editUserFragment;
+        } else if (id == R.id.main_nav_topic) {
+            fragment = topicFragment;
         }
 
         if (fragment != null) {

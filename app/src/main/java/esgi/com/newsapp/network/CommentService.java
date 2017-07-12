@@ -107,10 +107,11 @@ public class CommentService {
     }
 
     /**
-     * Method used to get comments
+     * Method used to get comments for a news
+     * @param id the id of the news
      * @param callback the callback that returns nothing for a success or the return code + message for a failure
      */
-    public void getCommentsForNews(String id, final ApiResult<List<Comment>> callback) {
+    public void getCommentsForNews(final String id, final ApiResult<List<Comment>> callback) {
         if (Network.isConnectionAvailable()) {
             String criteria = "{\"offset\":0, \"where\":{\"news\":\"" + id + "\"}}";
             Call<List<Comment>> call = this.commentService.getCommentsForNews("Bearer " + PreferencesHelper.getInstance().getToken(), criteria);
@@ -121,7 +122,7 @@ public class CommentService {
                     System.out.println("Return code : " + statusCode);
                     if (statusCode == HTTP_200) {
                         Log.d(getClass().getSimpleName(), "Return content : " + response.body());
-                        Log.d(getClass().getSimpleName(), "Got comment");
+                        Log.d(getClass().getSimpleName(), "Got comments for news " + id);
                         List<Comment> values = response.body();
                         callback.success(values);
                     } else {
@@ -131,7 +132,7 @@ public class CommentService {
 
                 @Override
                 public void onFailure(Call<List<Comment>> call, Throwable t) {
-                    Log.e("CommentService", "Error while calling the 'getComment' method !", t);
+                    Log.e("CommentService", "Error while calling the 'getCommentsForNews' method !", t);
                     callback.error(-1, t.getLocalizedMessage());
                 }
             });

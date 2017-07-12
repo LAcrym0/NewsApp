@@ -142,6 +142,41 @@ public class PostService {
         }
     }
 
+    /**
+     * Method used to get comments for a news
+     * @param id the id of the topic
+     * @param callback the callback that returns nothing for a success or the return code + message for a failure
+     */
+    public void getPostsForTopic(final String id, final ApiResult<List<Post>> callback) {
+        if (Network.isConnectionAvailable()) {
+            String criteria = "{\"offset\":0, \"where\":{\"topic\":\"" + id + "\"}}";
+            Call<List<Post>> call = this.postService.getPostsForTopic("Bearer " + PreferencesHelper.getInstance().getToken(), criteria);
+            call.enqueue(new Callback<List<Post>>() {
+                @Override
+                public void onResponse(Call<List<Post>> call, Response<List<Post>> response) {
+                    int statusCode = response.code();
+                    System.out.println("Return code : " + statusCode);
+                    if (statusCode == HTTP_200) {
+                        Log.d(getClass().getSimpleName(), "Return content : " + response.body());
+                        Log.d(getClass().getSimpleName(), "Got comments for topic " + id);
+                        List<Post> values = response.body();
+                        callback.success(values);
+                    } else {
+                        callback.error(statusCode, response.message());
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<List<Post>> call, Throwable t) {
+                    Log.e("CommentService", "Error while calling the 'getPostsForTopic' method !", t);
+                    callback.error(-1, t.getLocalizedMessage());
+                }
+            });
+        } else {
+            onConnectionError(callback);
+        }
+    }
+
     //---------------
     // DELETE POST
     //---------------

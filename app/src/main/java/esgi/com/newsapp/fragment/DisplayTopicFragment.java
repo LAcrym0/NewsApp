@@ -15,7 +15,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import esgi.com.newsapp.R;
 import esgi.com.newsapp.adapter.CommentAdapter;
+import esgi.com.newsapp.adapter.PostAdapter;
 import esgi.com.newsapp.model.Comment;
+import esgi.com.newsapp.model.Post;
 import esgi.com.newsapp.network.ApiResult;
 import esgi.com.newsapp.network.RetrofitSession;
 
@@ -23,51 +25,51 @@ import esgi.com.newsapp.network.RetrofitSession;
  * Created by Grunt on 12/07/2017.
  */
 
-public class DisplayNewsFragment extends RootFragment {
-    public static String DISPLAY_NEWS_TAG = "DISPLAYNEWS";
+public class DisplayTopicFragment extends RootFragment {
+    public static String DISPLAY_TOPIC_TAG = "DISPLAYTOPIC";
 
     private String title;
-    private List<Comment> commentsList;
-    private CommentAdapter adapter;
+    private List<Post> postsList;
+    private PostAdapter adapter;
 
-    @BindView(R.id.tv_content_news)
+    @BindView(R.id.tv_content_topic)
     public TextView tvContent;
 
-    @BindView(R.id.rv_coms)
-    public RecyclerView rvComs;
+    @BindView(R.id.rv_posts)
+    public RecyclerView rvPosts;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        View view = inflater.inflate(R.layout.fragment_display_news, container, false);
+        View view = inflater.inflate(R.layout.fragment_display_topic, container, false);
         ButterKnife.bind(this, view);
 
         Bundle bundle = getArguments();
-        title = bundle.getString(getString(R.string.bundle_news_title));
-        String id = bundle.getString(getString(R.string.bundle_news_id));
-        String content = bundle.getString(getString(R.string.bundle_news_content));
+        title = bundle.getString(getString(R.string.bundle_topic_title));
+        String id = bundle.getString(getString(R.string.bundle_topic_id));
+        String content = bundle.getString(getString(R.string.bundle_topic_content));
         tvContent.setText(content);
 
-        rvComs.setHasFixedSize(true);
+        rvPosts.setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
-        rvComs.setLayoutManager(llm);
+        rvPosts.setLayoutManager(llm);
 
-        getComs(id);
+        getPosts(id);
 
         return view;
     }
 
-    private void getComs(String id) {
-        RetrofitSession.getInstance().getCommentService().getCommentsForNews(id, new ApiResult<List<Comment>>() {
+    private void getPosts(String id) {
+        RetrofitSession.getInstance().getPostService().getPostsForTopic(id, new ApiResult<List<Post>>() {
             @Override
-            public void success(List<Comment> res) {
-                commentsList = res;
-                for (Comment comment : res)
-                    System.out.println(comment.getContent());
+            public void success(List<Post> res) {
+                postsList = res;
+                for (Post post : res)
+                    System.out.println(post.getContent());
                 System.out.println(res.size());
-                adapter = new CommentAdapter(commentsList);
-                rvComs.setAdapter(adapter);
+                adapter = new PostAdapter(postsList);
+                rvPosts.setAdapter(adapter);
             }
 
             @Override

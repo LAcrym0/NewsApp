@@ -1,14 +1,19 @@
 package esgi.com.newsapp.model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by Grunt on 11/07/2017.
  */
 
 public class Comment {
+    @SerializedName("_id")
+    private String id;
+
     private String title;
-        private String content;
-        private String news;
-        private String date;
+    private String content;
+    private String news;
+    private String date;
 
     public Comment(String title, String content, String news, String date) {
             this.title = title;

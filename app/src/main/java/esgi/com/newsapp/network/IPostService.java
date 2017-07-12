@@ -12,6 +12,7 @@ import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 /**
  * Created by Grunt on 11/07/2017.
@@ -29,6 +30,10 @@ public interface IPostService {
     @GET("/posts/")
     @Headers("Content-Type: application/json")
     Call<List<Post>> getPostsList(@Header("Authorization") String token);
+
+    @GET("/posts")
+    @Headers("Content-Type: application/json")
+    Call<List<Post>> getPostsForTopic(@Header("Authorization") String token, @Query("criteria") String criteria);
 
     @PUT("/posts/{id}/")
     @Headers("Content-Type: application/json")

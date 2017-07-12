@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".fragment.DisplayNewsFragment">
+    tools:context=".fragment.DisplayTopicFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -18,7 +18,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/tv_content_news"
+                android:id="@+id/tv_content_topic"
                 android:maxHeight="200dp"/>
 
         </ScrollView>
@@ -26,7 +26,7 @@
         <android.support.v7.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/rv_coms"/>
+            android:id="@+id/rv_posts"/>
 
     </LinearLayout>
 

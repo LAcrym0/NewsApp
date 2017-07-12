@@ -29,8 +29,8 @@ public class LoginActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         //todo remove that, only for tests
-        email.setText("test127@digipolitan.com");
-        password.setText("testcréationtest");
+        email.setText("testeur@gmail.com");
+        password.setText("password");
 
     }
 
