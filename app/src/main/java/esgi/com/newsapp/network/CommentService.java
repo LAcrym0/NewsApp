@@ -5,81 +5,43 @@ import android.util.Log;
 import java.util.List;
 
 import esgi.com.newsapp.R;
+import esgi.com.newsapp.model.Comment;
 import esgi.com.newsapp.utils.Network;
 import esgi.com.newsapp.utils.PreferencesHelper;
 import esgi.com.newsapp.utils.Utils;
-import esgi.com.newsapp.model.User;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
 /**
- * Created by Grunt on 28/06/2017.
+ * Created by Grunt on 11/07/2017.
  */
 
-public class UserService {
-    private IUserService userService;
+public class CommentService {
+    private ICommentService commentService;
 
     //HTTP return codes
     private static final int HTTP_200 = 200;
     private static final int HTTP_201 = 201;
     private static final int HTTP_204 = 204;
 
-    UserService(Retrofit retrofit) {
-        userService = retrofit.create(IUserService.class);
+    CommentService(Retrofit retrofit) {
+        commentService = retrofit.create(ICommentService.class);
     }
 
     //---------------
-    // AUTHENTICATION
+    // COMMENT CREATION
     //---------------
 
     /**
-     * Method used to login
-     * @param user the user to log in
-     * @param callback the callback that returns the token string for a success or the return code + message for a failure
-     */
-    public void login(User user, final ApiResult<String> callback) {
-        if (Network.isConnectionAvailable()) {
-            Call<String> call = this.userService.login(user);
-            call.enqueue(new Callback<String>() {
-                @Override
-                public void onResponse(Call<String> call, Response<String> response) {
-                    int statusCode = response.code();
-                    System.out.println("Return code : " + statusCode);
-                    if (statusCode == HTTP_200) {
-                        Log.d(getClass().getSimpleName(), "token : " + response.body());
-                        PreferencesHelper.getInstance().setToken(response.body());
-                        String token = response.body();
-                        callback.success(token);
-                    } else {
-                        callback.error(statusCode, response.message());
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<String> call, Throwable t) {
-                    Log.e(getClass().getSimpleName(), "Error while calling the 'login' method !", t);
-                    callback.error(-1, t.getLocalizedMessage());
-                }
-            });
-        } else {
-            onConnectionError(callback);
-        }
-    }
-
-    //---------------
-    // ACCOUNT CREATION
-    //---------------
-
-    /**
-     * Method used to create an account
-     * @param user the user to create an account for
+     * Method used to create a comment
+     * @param comment the comment to create
      * @param callback the callback that returns nothing for a success or the return code + message for a failure
      */
-    public void createAccount(User user, final ApiResult<Void> callback) {
+    public void createComment(Comment comment, final ApiResult<Void> callback) {
         if (Network.isConnectionAvailable()) {
-            Call<Void> call = this.userService.createAccount(user);
+            Call<Void> call = this.commentService.createComment("Bearer " + PreferencesHelper.getInstance().getToken(), comment);
             call.enqueue(new Callback<Void>() {
                 @Override
                 public void onResponse(Call<Void> call, Response<Void> response) {
@@ -87,20 +49,17 @@ public class UserService {
                     System.out.println("Return code : " + statusCode);
                     if (statusCode == HTTP_201) {
                         Log.d(getClass().getSimpleName(), "Return code : " + response.body());
-                        Log.d(getClass().getSimpleName(), "Account created");
+                        Log.d(getClass().getSimpleName(), "Comment created");
                         Void value = response.body();
                         callback.success(value);
-                    } else if (statusCode == HTTP_200){
-                        Log.d(getClass().getSimpleName(), "Account already existing");
-                        callback.error(statusCode, response.message());
-                    } else {
+                    }  else {
                         callback.error(statusCode, response.message());
                     }
                 }
 
                 @Override
                 public void onFailure(Call<Void> call, Throwable t) {
-                    Log.e("UserService", "Error while calling the 'createAccount' method !", t);
+                    Log.e("CommentService", "Error while calling the 'createComment' method !", t);
                     callback.error(-1, t.getLocalizedMessage());
                 }
             });
@@ -110,25 +69,26 @@ public class UserService {
     }
 
     //---------------
-    // USER DISPLAY
+    // COMMENT DISPLAY
     //---------------
 
     /**
-     * Method used to get logged user's information
+     * Method used to get comment by id
+     * @param id the id string
      * @param callback the callback that returns nothing for a success or the return code + message for a failure
      */
-    public void getMyInformation(final ApiResult<User> callback) {
+    public void getComment(String id, final ApiResult<Comment> callback) {
         if (Network.isConnectionAvailable()) {
-            Call<User> call = this.userService.getMyInformation("Bearer " + PreferencesHelper.getInstance().getToken());
-            call.enqueue(new Callback<User>() {
+            Call<Comment> call = this.commentService.getComment("Bearer " + PreferencesHelper.getInstance().getToken(), id);
+            call.enqueue(new Callback<Comment>() {
                 @Override
-                public void onResponse(Call<User> call, Response<User> response) {
+                public void onResponse(Call<Comment> call, Response<Comment> response) {
                     int statusCode = response.code();
                     System.out.println("Return code : " + statusCode);
                     if (statusCode == HTTP_200) {
                         Log.d(getClass().getSimpleName(), "Return content : " + response.body());
-                        Log.d(getClass().getSimpleName(), "Got user information");
-                        User value = response.body();
+                        Log.d(getClass().getSimpleName(), "Got comment");
+                        Comment value = response.body();
                         callback.success(value);
                     } else {
                         callback.error(statusCode, response.message());
@@ -136,8 +96,8 @@ public class UserService {
                 }
 
                 @Override
-                public void onFailure(Call<User> call, Throwable t) {
-                    Log.e("UserService", "Error while calling the 'getMyInformation' method !", t);
+                public void onFailure(Call<Comment> call, Throwable t) {
+                    Log.e("CommentService", "Error while calling the 'getComment' method !", t);
                     callback.error(-1, t.getLocalizedMessage());
                 }
             });
@@ -147,21 +107,21 @@ public class UserService {
     }
 
     /**
-     * Method used to get the user's list
+     * Method used to get comments
      * @param callback the callback that returns nothing for a success or the return code + message for a failure
      */
-    public void getUsersList(final ApiResult<List<User>> callback) {
+    public void getCommentsList(final ApiResult<List<Comment>> callback) {
         if (Network.isConnectionAvailable()) {
-            Call<List<User>> call = this.userService.getUsersList();
-            call.enqueue(new Callback<List<User>>() {
+            Call<List<Comment>> call = this.commentService.getCommentsList("Bearer " + PreferencesHelper.getInstance().getToken());
+            call.enqueue(new Callback<List<Comment>>() {
                 @Override
-                public void onResponse(Call<List<User>> call, Response<List<User>> response) {
+                public void onResponse(Call<List<Comment>> call, Response<List<Comment>> response) {
                     int statusCode = response.code();
                     System.out.println("Return code : " + statusCode);
                     if (statusCode == HTTP_200) {
                         Log.d(getClass().getSimpleName(), "Return content : " + response.body());
-                        Log.d(getClass().getSimpleName(), "Got usersList");
-                        List<User> values = response.body();
+                        Log.d(getClass().getSimpleName(), "Got comment");
+                        List<Comment> values = response.body();
                         callback.success(values);
                     } else {
                         callback.error(statusCode, response.message());
@@ -169,8 +129,8 @@ public class UserService {
                 }
 
                 @Override
-                public void onFailure(Call<List<User>> call, Throwable t) {
-                    Log.e("UserService", "Error while calling the 'getUsersList' method !", t);
+                public void onFailure(Call<List<Comment>> call, Throwable t) {
+                    Log.e("CommentService", "Error while calling the 'getComment' method !", t);
                     callback.error(-1, t.getLocalizedMessage());
                 }
             });
@@ -180,35 +140,71 @@ public class UserService {
     }
 
     //---------------
-    // ACCOUNT EDITION
+    // DELETE COMMENT
     //---------------
 
     /**
-     * Method used to get edit the logged user
-     * @param user the user object containing the fields to edit
+     * Method used to delete a comment
      * @param callback the callback that returns nothing for a success or the return code + message for a failure
      */
-    public void editUser(User user, final ApiResult<User> callback) {
+    public void deleteComment(String id, final ApiResult<Void> callback) {
         if (Network.isConnectionAvailable()) {
-            Call<User> call = this.userService.editUser("Bearer " + PreferencesHelper.getInstance().getToken(), user);
-            call.enqueue(new Callback<User>() {
+            Call<Void> call = this.commentService.deleteComment("Bearer " + PreferencesHelper.getInstance().getToken(), id);
+            call.enqueue(new Callback<Void>() {
                 @Override
-                public void onResponse(Call<User> call, Response<User> response) {
+                public void onResponse(Call<Void> call, Response<Void> response) {
                     int statusCode = response.code();
                     System.out.println("Return code : " + statusCode);
                     if (statusCode == HTTP_204) {
                         Log.d(getClass().getSimpleName(), "Return content : " + response.body());
-                        Log.d(getClass().getSimpleName(), "User edited");
-                        User value = response.body();
-                        callback.success(value);
+                        Log.d(getClass().getSimpleName(), "Deleted comment");
+                        Void values = response.body();
+                        callback.success(values);
                     } else {
                         callback.error(statusCode, response.message());
                     }
                 }
 
                 @Override
-                public void onFailure(Call<User> call, Throwable t) {
-                    Log.e("UserService", "Error while calling the 'editUser' method !", t);
+                public void onFailure(Call<Void> call, Throwable t) {
+                    Log.e("CommentService", "Error while calling the 'deleteComment' method !", t);
+                    callback.error(-1, t.getLocalizedMessage());
+                }
+            });
+        } else {
+            onConnectionError(callback);
+        }
+    }
+
+    //---------------
+    // EDIT COMMENT
+    //---------------
+
+    /**
+     * Method used to edit a comment
+     * @param callback the callback that returns nothing for a success or the return code + message for a failure
+     */
+    public void editComment(String id, Comment comment, final ApiResult<Void> callback) {
+        if (Network.isConnectionAvailable()) {
+            Call<Void> call = this.commentService.editComment("Bearer " + PreferencesHelper.getInstance().getToken(), id, comment);
+            call.enqueue(new Callback<Void>() {
+                @Override
+                public void onResponse(Call<Void> call, Response<Void> response) {
+                    int statusCode = response.code();
+                    System.out.println("Return code : " + statusCode);
+                    if (statusCode == HTTP_204) {
+                        Log.d(getClass().getSimpleName(), "Return content : " + response.body());
+                        Log.d(getClass().getSimpleName(), "Edited comment");
+                        Void values = response.body();
+                        callback.success(values);
+                    } else {
+                        callback.error(statusCode, response.message());
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Void> call, Throwable t) {
+                    Log.e("CommentService", "Error while calling the 'editComment' method !", t);
                     callback.error(-1, t.getLocalizedMessage());
                 }
             });

@@ -1,11 +1,16 @@
 package esgi.com.newsapp.model;
 
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by Grunt on 28/06/2017.
  */
 
 public class User {
+    @SerializedName("_id")
+    private String id;
+
     private String email;
     private String password;
 

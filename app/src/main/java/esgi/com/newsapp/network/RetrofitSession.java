@@ -23,6 +23,10 @@ public class RetrofitSession {
     //init once with private constructor
     private static final RetrofitSession INSTANCE = new RetrofitSession();
     private UserService userService;
+    private CommentService commentService;
+    private NewsService newsService;
+    private PostService postService;
+    private TopicService topicService;
 
     private static GsonBuilder getDefaultGsonBuilder() {
         GsonBuilder defaultGsonBuilder = new GsonBuilder();
@@ -83,9 +87,25 @@ public class RetrofitSession {
 
         this.retrofit = retrofitBuilder.build();
         this.userService = new UserService(this.retrofit);
+        this.newsService = new NewsService(this.retrofit);
+        this.commentService = new CommentService(this.retrofit);
+        this.postService = new PostService(this.retrofit);
+        this.topicService = new TopicService(this.retrofit);
     }
 
     public UserService getUserService() {
         return userService;
+    }
+    public NewsService getNewsService() {
+        return newsService;
+    }
+    public CommentService getCommentService() {
+        return commentService;
+    }
+    public PostService getPostService() {
+        return postService;
+    }
+    public TopicService getTopicService() {
+        return topicService;
     }
 }
