@@ -5,7 +5,9 @@ import android.util.Log;
 import java.util.List;
 
 import esgi.com.newsapp.R;
+import esgi.com.newsapp.database.RealmManager;
 import esgi.com.newsapp.model.News;
+import esgi.com.newsapp.model.Topic;
 import esgi.com.newsapp.utils.Network;
 import esgi.com.newsapp.utils.PreferencesHelper;
 import esgi.com.newsapp.utils.Utils;
@@ -122,6 +124,7 @@ public class NewsService {
                         Log.d(getClass().getSimpleName(), "Return content : " + response.body());
                         Log.d(getClass().getSimpleName(), "Got news list");
                         List<News> values = response.body();
+                        RealmManager.getNewsDAO().save(values);
                         callback.success(values);
                     } else {
                         callback.error(statusCode, response.message());
@@ -135,7 +138,14 @@ public class NewsService {
                 }
             });
         } else {
-            onConnectionError(callback);
+           // onConnectionError(callback);
+
+            List<News> newsList = RealmManager.getNewsDAO().getList();
+            if (!newsList.isEmpty()){
+                callback.success(newsList);
+            }else{
+                onConnectionError(callback);
+            }
         }
     }
 
