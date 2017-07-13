@@ -1,6 +1,5 @@
 package esgi.com.newsapp.activity;
 
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -21,7 +20,6 @@ import esgi.com.newsapp.fragment.NewsFragment;
 import esgi.com.newsapp.fragment.RootFragment;
 import esgi.com.newsapp.fragment.RootStackFragment;
 import esgi.com.newsapp.fragment.TopicFragment;
-import esgi.com.newsapp.model.Topic;
 
 /**
  * Created by Grunt on 12/07/2017.
