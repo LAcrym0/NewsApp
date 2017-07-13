@@ -9,6 +9,8 @@ import esgi.com.newsapp.model.Topic;
 import esgi.com.newsapp.utils.Network;
 import esgi.com.newsapp.utils.PreferencesHelper;
 import esgi.com.newsapp.utils.Utils;
+import io.realm.Realm;
+import io.realm.RealmResults;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -26,8 +28,15 @@ public class TopicService {
     private static final int HTTP_201 = 201;
     private static final int HTTP_204 = 204;
 
+    Realm realm;
+    private RealmResults<Topic> topicListOff;
+
     TopicService(Retrofit retrofit) {
-        topicService = retrofit.create(ITopicService.class);
+        realm = Realm.getDefaultInstance();
+        topicService = retrofit.create(ITopicService.class
+
+        );
+
     }
 
     //---------------
@@ -123,10 +132,42 @@ public class TopicService {
                     if (statusCode == HTTP_200) {
                         Log.d(getClass().getSimpleName(), "Return content : " + response.body());
                         Log.d(getClass().getSimpleName(), "Got topic list");
-                        List<Topic> values = response.body();
+                        final List<Topic> values = response.body();
+
+
+                        // PAS ASYNC
+                        /*realm.beginTransaction();
+                        //realm.copyToRealmOrUpdate(values);
+                        Topic topicR = realm.createObject(Topic.class, values.get(1).getId());
+                        topicR.setDate(values.get(0).getDate());
+                        topicR.setContent(values.get(0).getContent());
+                        topicR.setTitle(values.get(0).getTitle());
+                        realm.commitTransaction();*/
+
+
+
+                        realm.executeTransactionAsync(new Realm.Transaction() {
+                            @Override
+                            public void execute(Realm realm) {
+                                realm.copyToRealmOrUpdate(values);
+                            }
+                        }, new Realm.Transaction.OnSuccess() {
+                            @Override
+                            public void onSuccess() {
+                                Log.d("TAGLISTOPIC","SUCCESS");
+                                topicListOff = realm.where(Topic.class).findAll();
+                                callback.success(values);
+                            }
+                        }, new Realm.Transaction.OnError() {
+                            @Override
+                            public void onError(Throwable error) {
+                                callback.success(values);
+                                Log.d("TAGLISTOPIC",error.toString());
+                            }
+                        });
+
                         callback.success(values);
-                    } else {
-                        callback.error(statusCode, response.message());
+
                     }
                 }
 
@@ -137,6 +178,7 @@ public class TopicService {
                 }
             });
         } else {
+            topicListOff = realm.where(Topic.class).findAll();
             onConnectionError(callback);
         }
     }
