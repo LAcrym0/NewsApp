@@ -2,6 +2,7 @@ package esgi.com.newsapp.network;
 
 import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import esgi.com.newsapp.R;
@@ -150,12 +151,14 @@ public class TopicService {
                             @Override
                             public void execute(Realm realm) {
                                 realm.copyToRealmOrUpdate(values);
+
                             }
                         }, new Realm.Transaction.OnSuccess() {
                             @Override
                             public void onSuccess() {
                                 Log.d("TAGLISTOPIC","SUCCESS");
                                 topicListOff = realm.where(Topic.class).findAll();
+                                Log.d("TOPIC",topicListOff.get(0).getId());
                                 callback.success(values);
                             }
                         }, new Realm.Transaction.OnError() {
@@ -179,7 +182,22 @@ public class TopicService {
             });
         } else {
             topicListOff = realm.where(Topic.class).findAll();
-            onConnectionError(callback);
+
+            if (!topicListOff.isEmpty()){
+                List<Topic> topicList = new ArrayList<>();
+                Topic topic ;
+                for (int i = 0 ; i < topicListOff.size();i++){
+                    topic = new Topic();
+                    topic.setId(topicListOff.get(i).getId());
+                    topic.setTitle(topicListOff.get(i).getTitle());
+                    topic.setContent(topicListOff.get(i).getContent());
+                    topicList.add(topic);
+                }
+                callback.success(topicList);
+            }else{
+                onConnectionError(callback);
+            }
+
         }
     }
 
