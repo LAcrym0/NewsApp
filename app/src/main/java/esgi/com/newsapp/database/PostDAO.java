@@ -5,6 +5,7 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
+import esgi.com.newsapp.model.Post;
 import esgi.com.newsapp.model.Topic;
 import io.realm.Realm;
 import io.realm.RealmResults;
@@ -13,20 +14,21 @@ import io.realm.RealmResults;
  * Created by junior on 13/07/2017.
  */
 
-public class TopicDAO {
+public class PostDAO {
 
     Realm realm;
 
-    public TopicDAO(){
+    public PostDAO(){
+
         realm = RealmManager.getRealmInstance();
     }
 
-    public boolean save(final List<Topic> topicList){
+    public boolean save(final List<Post> postList){
 
         realm.executeTransactionAsync(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                realm.copyToRealmOrUpdate(topicList);
+                realm.copyToRealmOrUpdate(postList);
             }
         }, new Realm.Transaction.OnSuccess() {
             @Override
@@ -42,21 +44,23 @@ public class TopicDAO {
         return false;
     }
 
-    public List<Topic> getList(){
-        RealmResults<Topic> topicListOff = realm.where(Topic.class).findAll();
-        List<Topic> topicList = new ArrayList<>();
+    public List<Post> getListForTopic(String id){
+        RealmResults<Post> topicListOff = realm.where(Post.class).equalTo("topic",id).findAll();
+        List<Post> topicList = new ArrayList<>();
 
         if (!topicListOff.isEmpty()){
-            Topic topic ;
+            Post post ;
             for (int i = 0 ; i < topicListOff.size();i++){
-                topic = new Topic();
-                topic.setId(topicListOff.get(i).getId());
-                topic.setTitle(topicListOff.get(i).getTitle());
-                topic.setContent(topicListOff.get(i).getContent());
-                topicList.add(topic);
+                post = new Post();
+                post.setId(topicListOff.get(i).getId());
+                post.setTitle(topicListOff.get(i).getTitle());
+                post.setContent(topicListOff.get(i).getContent());
+                topicList.add(post);
             }
         }
 
         return topicList;
     }
+
+
 }

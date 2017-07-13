@@ -2,19 +2,42 @@ package esgi.com.newsapp.model;
 
 import com.google.gson.annotations.SerializedName;
 
+import io.realm.RealmObject;
+import io.realm.annotations.Index;
+import io.realm.annotations.PrimaryKey;
+import io.realm.annotations.Required;
+
 /**
  * Created by Grunt on 11/07/2017.
  */
 
-public class Post {
+public class Post extends RealmObject  {
+
+    @Index
+    @PrimaryKey
     @SerializedName("_id")
     private String id;
+
+    @Required
+    @Index
     private String title;
+
+    @Required
     private String content;
+
+    @Index
     private String topic;
+
     private String date;
+
+    @Index
     private String author;
 
+
+
+    public Post(){
+
+    }
     public Post(String title, String content, String topic, String date) {
         this.title = title;
         this.content = content;
