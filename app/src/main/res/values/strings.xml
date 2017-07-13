@@ -13,6 +13,7 @@
     <string name="password">Mot de passe</string>
     <string name="subscribe">Créer le compte</string>
     <string name="edit">Modifier</string>
+    <string name="createpost">Créer le poste</string>
 
     <string name="nav_news">News</string>
     <string name="nav_topics">Topics</string>
@@ -30,4 +31,7 @@
     <string name="bundle_topic_id">TOPICID</string>
     <string name="bundle_topic_title">TOPICTITLE</string>
     <string name="bundle_topic_content">TOPICCONTENT</string>
+
+    <string name="title">Title</string>
+    <string name="content">content</string>
 </resources>

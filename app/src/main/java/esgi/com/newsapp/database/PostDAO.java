@@ -63,4 +63,30 @@ public class PostDAO {
     }
 
 
+    public void createPost(Post post) {
+        createPost(post, false);
+    }
+
+    public void createPost(final Post post, boolean synced) {
+        post.setSynced(synced);
+        realm.executeTransactionAsync(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                realm.copyToRealmOrUpdate(post);
+            }
+        },new Realm.Transaction.OnSuccess() {
+            @Override
+            public void onSuccess() {
+                Log.d("TAGPOSTCREATE","SUCCESS");
+            }
+        }, new Realm.Transaction.OnError() {
+            @Override
+            public void onError(Throwable error) {
+                Log.d("TAGPOSTCREATE",error.toString());
+            }
+        });
+
+    }
+
+
 }

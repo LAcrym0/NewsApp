@@ -42,7 +42,7 @@ public class PostService {
      * @param post the post to create
      * @param callback the callback that returns nothing for a success or the return code + message for a failure
      */
-    public void createPost(Post post, final ApiResult<Void> callback) {
+    public void createPost(final Post post, final ApiResult<Void> callback) {
         if (Network.isConnectionAvailable()) {
             Call<Void> call = this.postService.createPost("Bearer " + PreferencesHelper.getInstance().getToken(), post);
             call.enqueue(new Callback<Void>() {
@@ -56,7 +56,9 @@ public class PostService {
                         Void value = response.body();
                         callback.success(value);
                     }  else {
+
                         callback.error(statusCode, response.message());
+                        RealmManager.getPostDAO().createPost(post);
                     }
                 }
 
@@ -67,6 +69,7 @@ public class PostService {
                 }
             });
         } else {
+            RealmManager.getPostDAO().createPost(post);
             onConnectionError(callback);
         }
     }

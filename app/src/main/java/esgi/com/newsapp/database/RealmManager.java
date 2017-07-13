@@ -15,6 +15,7 @@ public class RealmManager {
     private static Realm realm;
 
     private static TopicDAO topicDAO;
+    private static  PostDAO postDAO;
 
     public static Realm getRealmInstance() {
         return realm;
@@ -29,9 +30,14 @@ public class RealmManager {
         Realm.setDefaultConfiguration(config);
         realm = Realm.getDefaultInstance();
         topicDAO = new TopicDAO();
+        postDAO = new PostDAO();
     }
 
     public static TopicDAO getTopicDAO() {
         return topicDAO;
+    }
+
+    public static  PostDAO getPostDAO(){
+        return postDAO;
     }
 }

@@ -2,8 +2,13 @@ package esgi.com.newsapp.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,6 +43,9 @@ public class DisplayTopicFragment extends RootFragment {
     @BindView(R.id.rv_posts)
     public RecyclerView rvPosts;
 
+    @BindView(R.id.fab)
+    public FloatingActionButton fab;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -47,7 +55,7 @@ public class DisplayTopicFragment extends RootFragment {
 
         Bundle bundle = getArguments();
         title = bundle.getString(getString(R.string.bundle_topic_title));
-        String id = bundle.getString(getString(R.string.bundle_topic_id));
+        final String id = bundle.getString(getString(R.string.bundle_topic_id));
         String content = bundle.getString(getString(R.string.bundle_topic_content));
         tvContent.setText(content);
 
@@ -56,6 +64,24 @@ public class DisplayTopicFragment extends RootFragment {
         rvPosts.setLayoutManager(llm);
 
         getPosts(id);
+
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("FAB",id);
+                FragmentManager fm = getActivity().getSupportFragmentManager();
+                Fragment createPostFragment = new CreatePostForTopicFragment();
+                FragmentTransaction transaction = fm.beginTransaction();
+
+                Bundle bundle = new Bundle();
+                bundle.putString(getString(R.string.bundle_topic_id), id);
+
+                createPostFragment.setArguments(bundle);
+                transaction.addToBackStack(null).replace(R.id.main_act_frame_content, createPostFragment, DisplayTopicFragment.DISPLAY_TOPIC_TAG);
+                transaction.commit();
+            }
+        });
 
         return view;
     }
