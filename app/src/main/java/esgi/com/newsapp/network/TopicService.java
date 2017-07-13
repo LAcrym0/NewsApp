@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import esgi.com.newsapp.R;
+import esgi.com.newsapp.database.TopicDAO;
 import esgi.com.newsapp.model.Topic;
 import esgi.com.newsapp.utils.Network;
 import esgi.com.newsapp.utils.PreferencesHelper;
@@ -30,10 +31,12 @@ public class TopicService {
     private static final int HTTP_204 = 204;
 
     Realm realm;
+    private TopicDAO topicDAO;
     private RealmResults<Topic> topicListOff;
 
     TopicService(Retrofit retrofit) {
         realm = Realm.getDefaultInstance();
+        topicDAO = new TopicDAO();
         topicService = retrofit.create(ITopicService.class
 
         );
@@ -134,41 +137,7 @@ public class TopicService {
                         Log.d(getClass().getSimpleName(), "Return content : " + response.body());
                         Log.d(getClass().getSimpleName(), "Got topic list");
                         final List<Topic> values = response.body();
-
-
-                        // PAS ASYNC
-                        /*realm.beginTransaction();
-                        //realm.copyToRealmOrUpdate(values);
-                        Topic topicR = realm.createObject(Topic.class, values.get(1).getId());
-                        topicR.setDate(values.get(0).getDate());
-                        topicR.setContent(values.get(0).getContent());
-                        topicR.setTitle(values.get(0).getTitle());
-                        realm.commitTransaction();*/
-
-
-
-                        realm.executeTransactionAsync(new Realm.Transaction() {
-                            @Override
-                            public void execute(Realm realm) {
-                                realm.copyToRealmOrUpdate(values);
-
-                            }
-                        }, new Realm.Transaction.OnSuccess() {
-                            @Override
-                            public void onSuccess() {
-                                Log.d("TAGLISTOPIC","SUCCESS");
-                                topicListOff = realm.where(Topic.class).findAll();
-                                Log.d("TOPIC",topicListOff.get(0).getId());
-                                callback.success(values);
-                            }
-                        }, new Realm.Transaction.OnError() {
-                            @Override
-                            public void onError(Throwable error) {
-                                callback.success(values);
-                                Log.d("TAGLISTOPIC",error.toString());
-                            }
-                        });
-
+                        topicDAO.save(values);
                         callback.success(values);
 
                     }
@@ -181,18 +150,9 @@ public class TopicService {
                 }
             });
         } else {
-            topicListOff = realm.where(Topic.class).findAll();
 
-            if (!topicListOff.isEmpty()){
-                List<Topic> topicList = new ArrayList<>();
-                Topic topic ;
-                for (int i = 0 ; i < topicListOff.size();i++){
-                    topic = new Topic();
-                    topic.setId(topicListOff.get(i).getId());
-                    topic.setTitle(topicListOff.get(i).getTitle());
-                    topic.setContent(topicListOff.get(i).getContent());
-                    topicList.add(topic);
-                }
+            List<Topic> topicList = topicDAO.getList();
+            if (!topicList.isEmpty()){
                 callback.success(topicList);
             }else{
                 onConnectionError(callback);
