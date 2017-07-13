@@ -14,9 +14,6 @@ import esgi.com.newsapp.model.Auth;
 import esgi.com.newsapp.network.ApiResult;
 import esgi.com.newsapp.network.RetrofitSession;
 
-import io.realm.Realm;
-import io.realm.RealmConfiguration;
-
 public class LoginActivity extends AppCompatActivity {
 
     @BindView(R.id.login_edit_email)
@@ -24,8 +21,6 @@ public class LoginActivity extends AppCompatActivity {
 
     @BindView(R.id.login_edit_password)
     EditText password;
-
-    Realm realm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,21 +31,6 @@ public class LoginActivity extends AppCompatActivity {
         //todo remove that, only for tests
         email.setText("testeur@gmail.com");
         password.setText("password");
-
-
-        Realm.init(getApplicationContext());
-
-        RealmConfiguration config = new RealmConfiguration
-                .Builder()
-                .deleteRealmIfMigrationNeeded()
-                .build();
-
-        Realm.setDefaultConfiguration(config);
-        realm = Realm.getDefaultInstance();
-
-
-
-
 
     }
 

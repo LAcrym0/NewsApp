@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import esgi.com.newsapp.R;
+import esgi.com.newsapp.database.RealmManager;
 import esgi.com.newsapp.database.TopicDAO;
 import esgi.com.newsapp.model.Topic;
 import esgi.com.newsapp.utils.Network;
@@ -30,16 +31,9 @@ public class TopicService {
     private static final int HTTP_201 = 201;
     private static final int HTTP_204 = 204;
 
-    Realm realm;
-    private TopicDAO topicDAO;
-    private RealmResults<Topic> topicListOff;
-
     TopicService(Retrofit retrofit) {
-        realm = Realm.getDefaultInstance();
-        topicDAO = new TopicDAO();
-        topicService = retrofit.create(ITopicService.class
 
-        );
+        topicService = retrofit.create(ITopicService.class);
 
     }
 
@@ -137,7 +131,7 @@ public class TopicService {
                         Log.d(getClass().getSimpleName(), "Return content : " + response.body());
                         Log.d(getClass().getSimpleName(), "Got topic list");
                         final List<Topic> values = response.body();
-                        topicDAO.save(values);
+                        RealmManager.getTopicDAO().save(values);
                         callback.success(values);
 
                     }
@@ -151,7 +145,7 @@ public class TopicService {
             });
         } else {
 
-            List<Topic> topicList = topicDAO.getList();
+            List<Topic> topicList = RealmManager.getTopicDAO().getList();
             if (!topicList.isEmpty()){
                 callback.success(topicList);
             }else{
