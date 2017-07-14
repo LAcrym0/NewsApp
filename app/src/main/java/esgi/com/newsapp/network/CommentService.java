@@ -5,7 +5,9 @@ import android.util.Log;
 import java.util.List;
 
 import esgi.com.newsapp.R;
+import esgi.com.newsapp.database.RealmManager;
 import esgi.com.newsapp.model.Comment;
+import esgi.com.newsapp.model.Post;
 import esgi.com.newsapp.utils.Network;
 import esgi.com.newsapp.utils.PreferencesHelper;
 import esgi.com.newsapp.utils.Utils;
@@ -124,6 +126,7 @@ public class CommentService {
                         Log.d(getClass().getSimpleName(), "Return content : " + response.body());
                         Log.d(getClass().getSimpleName(), "Got comments for news " + id);
                         List<Comment> values = response.body();
+                        RealmManager.getCommentDAO().save(values);
                         callback.success(values);
                     } else {
                         callback.error(statusCode, response.message());
@@ -137,7 +140,14 @@ public class CommentService {
                 }
             });
         } else {
-            onConnectionError(callback);
+           //onConnectionError(callback);
+
+            List<Comment> commentList = RealmManager.getCommentDAO().getListForNews(id);
+            if (!commentList.isEmpty()){
+                callback.success(commentList);
+            }else{
+                onConnectionError(callback);
+            }
         }
     }
 

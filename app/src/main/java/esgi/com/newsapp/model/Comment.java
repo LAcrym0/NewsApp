@@ -2,16 +2,30 @@ package esgi.com.newsapp.model;
 
 import com.google.gson.annotations.SerializedName;
 
+import io.realm.RealmObject;
+import io.realm.annotations.Index;
+import io.realm.annotations.PrimaryKey;
+import io.realm.annotations.Required;
+
 /**
  * Created by Grunt on 11/07/2017.
  */
 
-public class Comment {
+public class Comment extends RealmObject{
+
+
     @SerializedName("_id")
+    @PrimaryKey
+    @Index
     private String id;
 
+    @Index
     private String title;
+
+    @Required
     private String content;
+
+    @Index
     private String news;
     private String date;
 
@@ -21,6 +35,17 @@ public class Comment {
             this.news = news;
             this.date = date;
         }
+
+    public  Comment(){}
+
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getId() {
+        return id;
+    }
 
     public String getTitle() {
         return title;
