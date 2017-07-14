@@ -2,18 +2,14 @@ package esgi.com.newsapp.network;
 
 import android.util.Log;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import esgi.com.newsapp.R;
 import esgi.com.newsapp.database.RealmManager;
-import esgi.com.newsapp.database.TopicDAO;
 import esgi.com.newsapp.model.Topic;
 import esgi.com.newsapp.utils.Network;
 import esgi.com.newsapp.utils.PreferencesHelper;
 import esgi.com.newsapp.utils.Utils;
-import io.realm.Realm;
-import io.realm.RealmResults;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;

@@ -15,7 +15,8 @@ public class RealmManager {
     private static Realm realm;
 
     private static TopicDAO topicDAO;
-    private static  PostDAO postDAO;
+    private static PostDAO postDAO;
+    private static NewsDAO newsDAO;
 
     public static Realm getRealmInstance() {
         return realm;
@@ -31,6 +32,7 @@ public class RealmManager {
         realm = Realm.getDefaultInstance();
         topicDAO = new TopicDAO();
         postDAO = new PostDAO();
+        newsDAO = new NewsDAO();
     }
 
     public static TopicDAO getTopicDAO() {
@@ -39,5 +41,9 @@ public class RealmManager {
 
     public static  PostDAO getPostDAO(){
         return postDAO;
+    }
+
+    public static NewsDAO getNewsDAO() {
+        return newsDAO;
     }
 }

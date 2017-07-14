@@ -15,6 +15,7 @@ import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import esgi.com.newsapp.R;
 import esgi.com.newsapp.model.Post;
 import esgi.com.newsapp.network.ApiResult;
@@ -26,15 +27,11 @@ import esgi.com.newsapp.network.RetrofitSession;
 
 public class CreatePostForTopicFragment extends RootFragment {
 
-    @BindView(R.id.btn_create_poste)
-    public Button btnCreate;
-
     @BindView(R.id.et_content_post)
     public EditText etContent;
 
     @BindView(R.id.et_title_post)
     public EditText etTitle;
-
 
     public String topic;
 
@@ -46,31 +43,8 @@ public class CreatePostForTopicFragment extends RootFragment {
         View view = inflater.inflate(R.layout.fragment_create_post, container, false);
         ButterKnife.bind(this, view);
 
-
-
         Bundle bundle = getArguments();
         topic = bundle.getString(getString(R.string.bundle_topic_id));
-
-        btnCreate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!verifyFields())
-                    return;
-                Post postCreate = getPostFromForm();
-                RetrofitSession.getInstance().getPostService().createPost(postCreate, new ApiResult<Void>() {
-                    @Override
-                    public void success(Void res) {
-                        Toast.makeText(getContext(),"Post créer",Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void error(int code, String message) {
-                        Log.d("FAIL",message);
-                    }
-                });
-            }
-        });
-
 
         return view;
     }
@@ -100,10 +74,25 @@ public class CreatePostForTopicFragment extends RootFragment {
         post.setTopic(topic);
         Log.d("DATE", DateFormat.getDateTimeInstance().format(new Date()));
 
-
         return post;
+    }
 
+    @OnClick(R.id.btn_create_post)
+    public void createPost() {
+        if (!verifyFields())
+            return;
+        Post postCreate = getPostFromForm();
+        RetrofitSession.getInstance().getPostService().createPost(postCreate, new ApiResult<Void>() {
+            @Override
+            public void success(Void res) {
+                Toast.makeText(getContext(), "Post créé", Toast.LENGTH_SHORT).show();
+            }
 
+            @Override
+            public void error(int code, String message) {
+                Log.d("FAIL", message);
+            }
+        });
     }
 
 }
