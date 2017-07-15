@@ -1,5 +1,6 @@
 package esgi.com.newsapp.fragment;
 
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -14,16 +15,21 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -34,6 +40,7 @@ import esgi.com.newsapp.adapter.NewsAdapter;
 import esgi.com.newsapp.model.News;
 import esgi.com.newsapp.network.ApiResult;
 import esgi.com.newsapp.network.RetrofitSession;
+import esgi.com.newsapp.utils.PreferencesHelper;
 
 public class NewsFragment extends RootFragment {
 
@@ -133,16 +140,73 @@ public class NewsFragment extends RootFragment {
         @Override
         public void onLongPress(MotionEvent e) {
             View view = rvNews.findChildViewUnder(e.getX(), e.getY());
-            int position = rvNews.getChildLayoutPosition(view);
-            if(position != -1){
-                Log.d("LONGTOUCHPOSITION",String.valueOf(position));
-            }
+            final int position = rvNews.getChildLayoutPosition(view);
+            Log.d("LONGTOUCHPOSITION", String.valueOf(position));
+            if(position != -1 && newsList.get(position).getAuthor().compareTo(PreferencesHelper.getInstance().getUserId()) == 0){
+                Log.d("LONGTOUCH", "AUTHOR");
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setTitle("Actions");
+                builder.setItems(getResources().getStringArray(R.array.menu_admin), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // the user clicked on colors[which]
+                        if (which == 0)
+                            deleteNewsForPosition(position);
+                        else if (which == 1)
+                            editNewsWithPosition(position);
+
+                    }
+                });
+                builder.show();
+            } else
+                Log.d("LONGTOUCH", "NOT AUTHOR");
             super.onLongPress(e);
 
         }
     }
 
+    private void editNewsWithPosition(final int position) {
+
+    }
+
+    private void deleteNewsForPosition(final int position) {
+        RetrofitSession.getInstance().getNewsService().deleteNews(newsList.get(position).getId(), new ApiResult<Void>() {
+            @Override
+            public void success(Void res) {
+                adapter.remove(position);
+                adapter.notifyItemMoved(position, position);
+                Toast.makeText(getContext(), getString(R.string.deleted), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void error(int code, String message) {
+                Toast.makeText(getContext(), getString(R.string.error_deleting), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
     private void setUpGestureListener() {
+        final GestureDetectorCompat detector = new GestureDetectorCompat(getActivity(), new NewsFragment.RecyclerViewOnGestureListener());
+        rvNews.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
+            @Override
+            public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
+                detector.onTouchEvent(e);
+                return false;
+            }
+
+            @Override
+            public void onTouchEvent(RecyclerView rv, MotionEvent e) {
+
+            }
+
+            @Override
+            public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+            }
+        });
+    }
+
+
+    /*private void setUpGestureListener() {
         final GestureDetectorCompat detector = new GestureDetectorCompat(getActivity(), new NewsFragment.RecyclerViewOnGestureListener());
         rvNews.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
             @Override
@@ -172,20 +236,21 @@ public class NewsFragment extends RootFragment {
 
                 final int position = viewHolder.getAdapterPosition();
                 if(position != -1){
-                    Log.d("SWIPED",String.valueOf(position));
-                    if (direction == ItemTouchHelper.LEFT){
-                        RetrofitSession.getInstance().getNewsService().deleteNews(newsList.get(position).getId(), new ApiResult<Void>() {
-                            @Override
-                            public void success(Void res) {
-                                adapter.remove(position);
-                            }
+                    if (newsList.get(position).getAuthor().compareTo(PreferencesHelper.getInstance().getUserId()) == 0) {
+                        Log.d("SWIPED", String.valueOf(position));
+                        if (direction == ItemTouchHelper.LEFT) {
+                            RetrofitSession.getInstance().getNewsService().deleteNews(newsList.get(position).getId(), new ApiResult<Void>() {
+                                @Override
+                                public void success(Void res) {
+                                    adapter.remove(position);
+                                }
 
-                            @Override
-                            public void error(int code, String message) {
+                                @Override
+                                public void error(int code, String message) {
 
-                            }
-                        });
-
+                                }
+                            });
+                        }
                     }
                 }
 
@@ -229,7 +294,7 @@ public class NewsFragment extends RootFragment {
 
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
         itemTouchHelper.attachToRecyclerView(rvNews);
-    }
+    }*/
 
     @Override
     public String getTitle() {

@@ -35,4 +35,12 @@
 
     <string name="title">Title</string>
     <string name="content">content</string>
+
+    <string name="error_login">Erreur de connexion</string>
+    <string name="error_deleting">Erreur lors de la suppression</string>
+    <string name="deleted">Supprimé</string>
+    <array name="menu_admin">
+        <item>Supprimer</item>
+        <item>Modifier</item>
+    </array>
 </resources>

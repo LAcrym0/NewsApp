@@ -2,6 +2,7 @@ package esgi.com.newsapp.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,8 +36,6 @@ public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         NewsViewHolder newsViewHolder = (NewsViewHolder) holder;
         newsViewHolder.tvTitle.setText(newsList.get(position).getTitle());
         newsViewHolder.tvContent.setText(newsList.get(position).getContent());
-
-
     }
 
     @Override

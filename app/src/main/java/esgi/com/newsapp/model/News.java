@@ -16,6 +16,7 @@ public class News extends RealmObject {
     private String title;
     private String content;
     private String date;
+    private String author;
 
     @SerializedName("_id")
     @Index
@@ -28,7 +29,8 @@ public class News extends RealmObject {
         this.date = date;
     }
 
-    public  News(){}
+    public News() {
+    }
 
     public String getTitle() {
         return title;
@@ -60,5 +62,9 @@ public class News extends RealmObject {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getAuthor() {
+        return author;
     }
 }

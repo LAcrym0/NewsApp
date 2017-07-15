@@ -59,4 +59,8 @@ public class User {
     public void setLastname(String lastname) {
         this.lastname = lastname;
     }
+
+    public String getId() {
+        return id;
+    }
 }
