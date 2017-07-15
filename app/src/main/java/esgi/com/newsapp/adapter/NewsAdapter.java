@@ -66,6 +66,5 @@ public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public void remove(int position){
         newsList.remove(position);
         notifyItemRemoved(position);
-        notifyItemRangeChanged(position, newsList.size());
     }
 }

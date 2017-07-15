@@ -149,7 +149,6 @@ public class NewsFragment extends RootFragment {
                 builder.setItems(getResources().getStringArray(R.array.menu_admin), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        // the user clicked on colors[which]
                         if (which == 0)
                             deleteNewsForPosition(position);
                         else if (which == 1)
@@ -166,7 +165,7 @@ public class NewsFragment extends RootFragment {
     }
 
     private void editNewsWithPosition(final int position) {
-
+        //todo implement news edition
     }
 
     private void deleteNewsForPosition(final int position) {
@@ -174,7 +173,6 @@ public class NewsFragment extends RootFragment {
             @Override
             public void success(Void res) {
                 adapter.remove(position);
-                adapter.notifyItemMoved(position, position);
                 Toast.makeText(getContext(), getString(R.string.deleted), Toast.LENGTH_SHORT).show();
             }
 

@@ -67,4 +67,9 @@ public class TopicAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
     }
+
+    public void remove(int position){
+        topicsList.remove(position);
+        notifyItemRemoved(position);
+    }
 }

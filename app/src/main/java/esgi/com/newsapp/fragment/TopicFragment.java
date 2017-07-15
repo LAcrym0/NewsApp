@@ -1,5 +1,6 @@
 package esgi.com.newsapp.fragment;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -8,14 +9,17 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -26,6 +30,7 @@ import esgi.com.newsapp.adapter.TopicAdapter;
 import esgi.com.newsapp.model.Topic;
 import esgi.com.newsapp.network.ApiResult;
 import esgi.com.newsapp.network.RetrofitSession;
+import esgi.com.newsapp.utils.PreferencesHelper;
 
 public class TopicFragment extends RootFragment {
 
@@ -98,7 +103,7 @@ public class TopicFragment extends RootFragment {
         });
     }
 
-    private void displayNews(int position) {
+    private void displayTopic(int position) {
         FragmentManager fm = getActivity().getSupportFragmentManager();
         Fragment displayTopicFragment = new DisplayTopicFragment();
         FragmentTransaction transaction = fm.beginTransaction();
@@ -117,9 +122,54 @@ public class TopicFragment extends RootFragment {
             View view = rvTopics.findChildViewUnder(e.getX(), e.getY());
             int position = rvTopics.getChildLayoutPosition(view);
             if (position != -1)//security for click out of bounds
-                displayNews(position);
+                displayTopic(position);
             return super.onSingleTapConfirmed(e);
         }
+
+        @Override
+        public void onLongPress(MotionEvent e) {
+            View view = rvTopics.findChildViewUnder(e.getX(), e.getY());
+            final int position = rvTopics.getChildLayoutPosition(view);
+            Log.d("LONGTOUCHPOSITION", String.valueOf(position));
+            if(position != -1 && topicsList.get(position).getAuthor().compareTo(PreferencesHelper.getInstance().getUserId()) == 0){
+                Log.d("LONGTOUCH", "AUTHOR");
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setTitle("Actions");
+                builder.setItems(getResources().getStringArray(R.array.menu_admin), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (which == 0)
+                            deleteTopicForPosition(position);
+                        else if (which == 1)
+                            editTopicWithPosition(position);
+
+                    }
+                });
+                builder.show();
+            } else
+                Log.d("LONGTOUCH", "NOT AUTHOR");
+            super.onLongPress(e);
+
+        }
+    }
+
+    private void editTopicWithPosition(final int position) {
+        //todo implement news edition
+    }
+
+    private void deleteTopicForPosition(final int position) {
+        RetrofitSession.getInstance().getTopicService().deleteTopic(topicsList.get(position).getId(), new ApiResult<Void>() {
+            @Override
+            public void success(Void res) {
+                adapter.remove(position);
+                Toast.makeText(getContext(), getString(R.string.deleted), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void error(int code, String message) {
+                Toast.makeText(getContext(), getString(R.string.error_deleting), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void setUpGestureListener() {
