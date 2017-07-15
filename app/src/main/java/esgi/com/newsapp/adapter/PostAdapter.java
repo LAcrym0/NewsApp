@@ -68,4 +68,9 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
     }
+
+    public void remove(int position){
+        postsList.remove(position);
+        notifyItemRemoved(position);
+    }
 }

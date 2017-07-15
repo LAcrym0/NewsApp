@@ -29,6 +29,7 @@ public class Comment extends RealmObject{
     @Index
     private String news;
     private String date;
+    private String author;
 
     @Exclude
     private Boolean synced;
@@ -89,6 +90,10 @@ public class Comment extends RealmObject{
 
     public void setSynced(Boolean synced) {
         this.synced = synced;
+    }
+
+    public String getAuthor() {
+        return author;
     }
 }
 

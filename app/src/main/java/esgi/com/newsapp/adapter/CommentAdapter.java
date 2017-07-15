@@ -67,4 +67,9 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
     }
+
+    public void remove(int position){
+        commentsList.remove(position);
+        notifyItemRemoved(position);
+    }
 }

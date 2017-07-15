@@ -1,30 +1,35 @@
 package esgi.com.newsapp.fragment;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.GestureDetectorCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import esgi.com.newsapp.R;
-import esgi.com.newsapp.adapter.CommentAdapter;
 import esgi.com.newsapp.adapter.PostAdapter;
-import esgi.com.newsapp.model.Comment;
 import esgi.com.newsapp.model.Post;
 import esgi.com.newsapp.network.ApiResult;
 import esgi.com.newsapp.network.RetrofitSession;
+import esgi.com.newsapp.utils.PreferencesHelper;
 
 /**
  * Created by Grunt on 12/07/2017.
@@ -63,6 +68,8 @@ public class DisplayTopicFragment extends RootFragment {
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
         rvPosts.setLayoutManager(llm);
 
+        setUpGestureListener();
+
         getPosts(id);
 
 
@@ -84,6 +91,26 @@ public class DisplayTopicFragment extends RootFragment {
         });
 
         return view;
+    }
+
+    private void setUpGestureListener() {
+        final GestureDetectorCompat detector = new GestureDetectorCompat(getActivity(), new DisplayTopicFragment.RecyclerViewOnGestureListener());
+        rvPosts.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
+            @Override
+            public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
+                detector.onTouchEvent(e);
+                return false;
+            }
+
+            @Override
+            public void onTouchEvent(RecyclerView rv, MotionEvent e) {
+
+            }
+
+            @Override
+            public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+            }
+        });
     }
 
     private void getPosts(String id) {
@@ -108,5 +135,50 @@ public class DisplayTopicFragment extends RootFragment {
     @Override
     public String getTitle() {
         return title;
+    }
+
+    private class RecyclerViewOnGestureListener extends GestureDetector.SimpleOnGestureListener {
+        @Override
+        public void onLongPress(MotionEvent e) {
+            View view = rvPosts.findChildViewUnder(e.getX(), e.getY());
+            final int position = rvPosts.getChildLayoutPosition(view);
+            Log.d("LONGTOUCHPOSITION", String.valueOf(position));
+            if(position != -1 && postsList.get(position).getAuthor().compareTo(PreferencesHelper.getInstance().getUserId()) == 0){
+                Log.d("LONGTOUCH", "AUTHOR");
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setTitle(getString(R.string.actions));
+                builder.setItems(getResources().getStringArray(R.array.menu_admin), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (which == 0)
+                            deletePostForPosition(position);
+                        else if (which == 1)
+                            editPostWithPosition(position);
+                    }
+                });
+                builder.show();
+            } else
+                Log.d("LONGTOUCH", "NOT AUTHOR");
+            super.onLongPress(e);
+        }
+    }
+
+    private void editPostWithPosition(final int position) {
+        //todo implement news edition
+    }
+
+    private void deletePostForPosition(final int position) {
+        RetrofitSession.getInstance().getCommentService().deleteComment(postsList.get(position).getId(), new ApiResult<Void>() {
+            @Override
+            public void success(Void res) {
+                adapter.remove(position);
+                Toast.makeText(getContext(), getString(R.string.deleted), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void error(int code, String message) {
+                Toast.makeText(getContext(), getString(R.string.error_deleting), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }
