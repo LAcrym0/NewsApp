@@ -2,6 +2,7 @@ package esgi.com.newsapp.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -73,7 +74,7 @@ public class CreateCommentForNewsFragment extends RootFragment {
         comment.setTitle(etTitle.getText().toString());
         comment.setContent(etContent.getText().toString());
         comment.setNews(news);
-        Log.d("DATE" ,DateFormat.getDateTimeInstance().format(new Date()));
+        Log.d("DATE", DateFormat.getDateTimeInstance().format(new Date()));
 
         return comment;
     }
@@ -86,7 +87,9 @@ public class CreateCommentForNewsFragment extends RootFragment {
         RetrofitSession.getInstance().getCommentService().createComment(comment, new ApiResult<Void>() {
             @Override
             public void success(Void res) {
-                Toast.makeText(getContext(), "Comment créé", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Commentaire créé", Toast.LENGTH_SHORT).show();
+                FragmentManager fm = getActivity().getSupportFragmentManager();
+                fm.popBackStackImmediate();
             }
 
             @Override

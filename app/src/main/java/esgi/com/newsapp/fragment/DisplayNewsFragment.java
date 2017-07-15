@@ -98,7 +98,7 @@ public class DisplayNewsFragment extends RootFragment {
                 RetrofitSession.getInstance().getCommentService().createComment(commentList.get(i), new ApiResult<Void>() {
                     @Override
                     public void success(Void res) {
-                        Toast.makeText(getContext(),"Toast en mémoire envoyer",Toast.LENGTH_SHORT);
+                        Toast.makeText(getContext(),"Com en mémoire envoyé",Toast.LENGTH_SHORT);
                     }
 
                     @Override

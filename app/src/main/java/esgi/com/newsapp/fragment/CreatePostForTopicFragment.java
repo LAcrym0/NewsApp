@@ -2,6 +2,9 @@ package esgi.com.newsapp.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -86,6 +89,8 @@ public class CreatePostForTopicFragment extends RootFragment {
             @Override
             public void success(Void res) {
                 Toast.makeText(getContext(), "Post créé", Toast.LENGTH_SHORT).show();
+                FragmentManager fm = getActivity().getSupportFragmentManager();
+                fm.popBackStackImmediate();
             }
 
             @Override

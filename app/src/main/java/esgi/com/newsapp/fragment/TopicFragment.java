@@ -194,6 +194,6 @@ public class TopicFragment extends RootFragment {
 
     @Override
     public String getTitle() {
-        return getString(R.string.nav_news);
+        return getString(R.string.nav_topics);
     }
 }
