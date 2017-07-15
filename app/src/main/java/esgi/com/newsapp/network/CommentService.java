@@ -11,6 +11,8 @@ import esgi.com.newsapp.model.Post;
 import esgi.com.newsapp.utils.Network;
 import esgi.com.newsapp.utils.PreferencesHelper;
 import esgi.com.newsapp.utils.Utils;
+import io.realm.Realm;
+import io.realm.RealmResults;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -41,7 +43,10 @@ public class CommentService {
      * @param comment the comment to create
      * @param callback the callback that returns nothing for a success or the return code + message for a failure
      */
-    public void createComment(Comment comment, final ApiResult<Void> callback) {
+    public void createComment(final Comment comment, final ApiResult<Void> callback) {
+        if(comment.getId() != null){
+            comment.setId(null);
+        }
         if (Network.isConnectionAvailable()) {
             Call<Void> call = this.commentService.createComment("Bearer " + PreferencesHelper.getInstance().getToken(), comment);
             call.enqueue(new Callback<Void>() {
@@ -53,8 +58,10 @@ public class CommentService {
                         Log.d(getClass().getSimpleName(), "Return code : " + response.body());
                         Log.d(getClass().getSimpleName(), "Comment created");
                         Void value = response.body();
+                        isCommentOff(comment);
                         callback.success(value);
                     }  else {
+                        RealmManager.getCommentDAO().createComment(comment);
                         callback.error(statusCode, response.message());
                     }
                 }
@@ -66,7 +73,34 @@ public class CommentService {
                 }
             });
         } else {
+            RealmManager.getCommentDAO().createComment(comment);
             onConnectionError(callback);
+        }
+    }
+
+    private void isCommentOff(Comment comment){
+         if(comment.getSynced() == null){
+            Realm realm = RealmManager.getRealmInstance();
+            final RealmResults<Comment> commentRealmResults = realm.where(Comment.class).equalTo("id",comment.getId()).findAll();
+            if(!commentRealmResults.isEmpty()){
+                realm.executeTransactionAsync(new Realm.Transaction() {
+                    @Override
+                    public void execute(Realm realm) {
+                        commentRealmResults.deleteAllFromRealm();
+                    }
+                }, new Realm.Transaction.OnSuccess() {
+                    @Override
+                    public void onSuccess() {
+                        Log.d("DELETECOMMENT","SUCESS");
+                    }
+                }, new Realm.Transaction.OnError() {
+                    @Override
+                    public void onError(Throwable error) {
+                        Log.d("DELETECOMMENT",error.getMessage());
+
+                    }
+                });
+            }
         }
     }
 

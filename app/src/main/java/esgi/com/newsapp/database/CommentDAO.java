@@ -4,6 +4,7 @@ import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import esgi.com.newsapp.model.Comment;
 import esgi.com.newsapp.model.Post;
@@ -21,9 +22,13 @@ public class CommentDAO {
     public CommentDAO(){
 
         realm = RealmManager.getRealmInstance();
+
     }
 
     public boolean save(final List<Comment> commentList){
+        for(int i = 0 ; i < commentList.size();i++){
+            commentList.get(i).setSynced(true);
+        }
 
         realm.executeTransactionAsync(new Realm.Transaction() {
             @Override
@@ -63,30 +68,52 @@ public class CommentDAO {
         return commentList;
     }
 
+    public List<Comment> getCommentOff(){
+        RealmResults<Comment> commentRealmResults = realm.where(Comment.class).equalTo("synced",false).findAll();
+        List<Comment> commentList = new ArrayList<>();
 
-    /*public void createPost(Post post) {
-        createPost(post, false);
+        if(!commentRealmResults.isEmpty()){
+            Comment comment;
+            for(int i =0;i < commentRealmResults.size();i++){
+                comment = new Comment();
+                comment.setId(commentRealmResults.get(i).getId());
+                comment.setTitle(commentRealmResults.get(i).getTitle());
+                comment.setContent(commentRealmResults.get(i).getContent());
+                comment.setNews(commentRealmResults.get(i).getNews());
+                commentList.add(comment);
+            }
+        }
+
+        return commentList;
     }
 
-    public void createPost(final Post post, boolean synced) {
-        post.setSynced(synced);
+
+    public void createComment(Comment comment) {
+        createComment(comment, false);
+    }
+
+    public void createComment(final Comment comment, boolean synced) {
+        comment.setSynced(synced);
+        if(comment.getId() == null) {
+            comment.setId(UUID.randomUUID().toString());
+        }
         realm.executeTransactionAsync(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                realm.copyToRealmOrUpdate(post);
+                realm.copyToRealmOrUpdate(comment);
             }
         },new Realm.Transaction.OnSuccess() {
             @Override
             public void onSuccess() {
-                Log.d("TAGPOSTCREATE","SUCCESS");
+                Log.d("TAGCOMMENTCREATE","SUCCESS");
             }
         }, new Realm.Transaction.OnError() {
             @Override
             public void onError(Throwable error) {
-                Log.d("TAGPOSTCREATE",error.toString());
+                Log.d("TAGCOMMENTCREATE",error.toString());
             }
         });
 
-    }*/
+    }
 
 }

@@ -2,6 +2,7 @@ package esgi.com.newsapp.model;
 
 import com.google.gson.annotations.SerializedName;
 
+import esgi.com.newsapp.network.Exclude;
 import io.realm.RealmObject;
 import io.realm.annotations.Index;
 import io.realm.annotations.PrimaryKey;
@@ -28,6 +29,9 @@ public class Comment extends RealmObject{
     @Index
     private String news;
     private String date;
+
+    @Exclude
+    private Boolean synced;
 
     public Comment(String title, String content, String news, String date) {
             this.title = title;
@@ -78,4 +82,13 @@ public class Comment extends RealmObject{
     public void setDate(String date) {
         this.date = date;
     }
+
+    public Boolean getSynced() {
+        return synced;
+    }
+
+    public void setSynced(Boolean synced) {
+        this.synced = synced;
+    }
 }
+

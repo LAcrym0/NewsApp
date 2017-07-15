@@ -2,22 +2,31 @@ package esgi.com.newsapp.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import esgi.com.newsapp.R;
 import esgi.com.newsapp.adapter.CommentAdapter;
+import esgi.com.newsapp.database.RealmManager;
 import esgi.com.newsapp.model.Comment;
 import esgi.com.newsapp.network.ApiResult;
 import esgi.com.newsapp.network.RetrofitSession;
+import esgi.com.newsapp.utils.Network;
 
 /**
  * Created by Grunt on 12/07/2017.
@@ -36,16 +45,21 @@ public class DisplayNewsFragment extends RootFragment {
     @BindView(R.id.rv_coms)
     public RecyclerView rvComs;
 
+    @BindView(R.id.fab_news)
+    public FloatingActionButton floatingActionButton;
+
+    String id;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_display_news, container, false);
         ButterKnife.bind(this, view);
-
+        sendCom();
         Bundle bundle = getArguments();
         title = bundle.getString(getString(R.string.bundle_news_title));
-        String id = bundle.getString(getString(R.string.bundle_news_id));
+         id = bundle.getString(getString(R.string.bundle_news_id));
         String content = bundle.getString(getString(R.string.bundle_news_content));
         tvContent.setText(content);
 
@@ -77,8 +91,45 @@ public class DisplayNewsFragment extends RootFragment {
         });
     }
 
+    private void sendCom(){
+        if(Network.isConnectionAvailable()){
+            final List<Comment> commentList = RealmManager.getCommentDAO().getCommentOff();
+            for(int i = 0;i < commentList.size();i++){
+                RetrofitSession.getInstance().getCommentService().createComment(commentList.get(i), new ApiResult<Void>() {
+                    @Override
+                    public void success(Void res) {
+                        Toast.makeText(getContext(),"Toast en mémoire envoyer",Toast.LENGTH_SHORT);
+                    }
+
+                    @Override
+                    public void error(int code, String message) {
+                        Toast.makeText(getContext(),message,Toast.LENGTH_SHORT);
+                    }
+                });
+            }
+        }
+
+        return;
+    }
+
     @Override
     public String getTitle() {
         return title;
+    }
+
+
+    @OnClick(R.id.fab_news)
+    public void goToCreateComment(){
+        Log.d("FAB",id);
+        FragmentManager fm = getActivity().getSupportFragmentManager();
+        Fragment createCommentFragment = new CreateCommentForNewsFragment();
+        FragmentTransaction transaction = fm.beginTransaction();
+
+        Bundle bundle = new Bundle();
+        bundle.putString(getString(R.string.bundle_news_id), id);
+
+        createCommentFragment.setArguments(bundle);
+        transaction.addToBackStack(null).replace(R.id.main_act_frame_content, createCommentFragment, DisplayTopicFragment.DISPLAY_TOPIC_TAG);
+        transaction.commit();
     }
 }
