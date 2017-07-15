@@ -53,6 +53,10 @@
     <string name="comment_created">Commentaire créé</string>
     <string name="fill_title">Please fill the title</string>
     <string name="fill_content">Please fill content</string>
+
+    <string name="disconnect">Déconnexion</string>
+
+
     <array name="menu_admin">
         <item>Supprimer</item>
         <item>Modifier</item>

@@ -1,5 +1,6 @@
 package esgi.com.newsapp.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -22,6 +23,7 @@ import esgi.com.newsapp.fragment.NewsFragment;
 import esgi.com.newsapp.fragment.RootFragment;
 import esgi.com.newsapp.fragment.RootStackFragment;
 import esgi.com.newsapp.fragment.TopicFragment;
+import esgi.com.newsapp.utils.PreferencesHelper;
 
 /**
  * Created by Grunt on 12/07/2017.
@@ -140,6 +142,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } else if (id == R.id.main_nav_topic) {
             fragment = topicFragment;
         }
+        else if (id == R.id.main_nav_disconnect) {
+            PreferencesHelper.getInstance().setUserId("");
+            PreferencesHelper.getInstance().setToken("");
+            startActivity(new Intent(MainActivity.this, LoginActivity.class));
+            finish();
+        }
 
         if (fragment != null) {
             DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -157,7 +165,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     .replace(R.id.main_act_frame_content, fragment)
                     .commit();
 
-            //setTitle(fragment.getTitle());
             return true;
         }
 
@@ -196,7 +203,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 ((RootStackFragment) targetFragment).onFragmentResult(fragment.getTargetRequestCode(), ((RootStackFragment) fragment).getResult());
             }
         }
-        //Util.closeKeyboard(this);
         getSupportFragmentManager().popBackStack();
     }
 }

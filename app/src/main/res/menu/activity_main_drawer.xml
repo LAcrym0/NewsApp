@@ -11,6 +11,9 @@
         <item
             android:id="@+id/main_nav_my_account"
             android:title="@string/nav_my_account"/>
+        <item
+            android:id="@+id/main_nav_disconnect"
+            android:title="@string/disconnect"/>
     </group>
 
 </menu>
