@@ -1,12 +1,6 @@
 package esgi.com.newsapp.fragment;
 
 import android.content.DialogInterface;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.RectF;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -18,16 +12,12 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
-import android.view.ContextMenu;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -50,15 +40,13 @@ public class NewsFragment extends RootFragment {
     @BindView(R.id.rv_news)
     public RecyclerView rvNews;
 
-    @BindView(R.id.fab)
-    public FloatingActionButton fab;
+    private FloatingActionButton fab;
 
     @BindView(R.id.srl_news)
     public SwipeRefreshLayout swipeRefreshLayoutNews;
 
     private List<News> newsList;
     private NewsAdapter adapter;
-    private Paint p = new Paint();
 
     @Nullable
     @Override
@@ -82,6 +70,16 @@ public class NewsFragment extends RootFragment {
 
         getNewsList();
 
+        fab = getMainActivity().getFab();
+        fab.setVisibility(View.VISIBLE);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d("FAB", "CLICK");
+                createNews();
+            }
+        });
+
         return view;
     }
 
@@ -99,7 +97,7 @@ public class NewsFragment extends RootFragment {
                 newsList = res;
                 rvNews.setVisibility(View.VISIBLE);
                 progressBar.setVisibility(View.GONE);
-                adapter = new NewsAdapter(getContext(), newsList);
+                adapter = new NewsAdapter(newsList);
                 rvNews.setAdapter(adapter);
                 if (swipeRefreshLayoutNews.isRefreshing())
                     swipeRefreshLayoutNews.setRefreshing(false);
@@ -114,7 +112,17 @@ public class NewsFragment extends RootFragment {
         });
     }
 
+    private void createNews() {
+        fab.setVisibility(View.GONE);
+        FragmentManager fm = getActivity().getSupportFragmentManager();
+        Fragment createNewsFragment = new CreateNewsFragment();
+        FragmentTransaction transaction = fm.beginTransaction();
+        transaction.addToBackStack(null).replace(R.id.main_act_frame_content, createNewsFragment, DisplayNewsFragment.DISPLAY_NEWS_TAG);
+        transaction.commit();
+    }
+
     private void displayNews(int position) {
+        fab.setVisibility(View.GONE);
         FragmentManager fm = getActivity().getSupportFragmentManager();
         Fragment displayNewsFragment = new DisplayNewsFragment();
         FragmentTransaction transaction = fm.beginTransaction();
@@ -145,7 +153,7 @@ public class NewsFragment extends RootFragment {
             if(position != -1 && newsList.get(position).getAuthor().compareTo(PreferencesHelper.getInstance().getUserId()) == 0){
                 Log.d("LONGTOUCH", "AUTHOR");
                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                builder.setTitle("Actions");
+                builder.setTitle(getString(R.string.actions));
                 builder.setItems(getResources().getStringArray(R.array.menu_admin), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {

@@ -30,14 +30,14 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        CommentViewHolder newsViewHolder = (CommentViewHolder) holder;
-        newsViewHolder.tvTitle.setText(commentsList.get(position).getTitle());
-        newsViewHolder.tvContent.setText(commentsList.get(position).getContent());
+        CommentViewHolder commentViewHolder = (CommentViewHolder) holder;
+        commentViewHolder.tvTitle.setText(commentsList.get(position).getTitle());
+        commentViewHolder.tvContent.setText(commentsList.get(position).getContent());
         if (commentsList.get(position).getDate() != null) {
-            newsViewHolder.tvDate.setText(DateConverter.toHumanReadableDate(commentsList.get(position).getDate()));
-            newsViewHolder.tvDate.setVisibility(View.VISIBLE);
+            commentViewHolder.tvDate.setText(DateConverter.toHumanReadableDate(commentsList.get(position).getDate()));
+            commentViewHolder.tvDate.setVisibility(View.VISIBLE);
         } else {
-            newsViewHolder.tvDate.setVisibility(View.GONE);
+            commentViewHolder.tvDate.setVisibility(View.GONE);
         }
 
     }

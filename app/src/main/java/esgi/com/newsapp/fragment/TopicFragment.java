@@ -40,8 +40,7 @@ public class TopicFragment extends RootFragment {
     @BindView(R.id.rv_topics)
     public RecyclerView rvTopics;
 
-    @BindView(R.id.fab)
-    public FloatingActionButton fab;
+    private FloatingActionButton fab;
 
     @BindView(R.id.srl_topic)
     public SwipeRefreshLayout swipeRefreshLayoutTopic;
@@ -71,6 +70,16 @@ public class TopicFragment extends RootFragment {
 
         getTopicsList();
 
+        fab = getMainActivity().getFab();
+        fab.setVisibility(View.VISIBLE);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d("FAB", "CLICK");
+                createTopic();
+            }
+        });
+
         return view;
     }
 
@@ -79,6 +88,15 @@ public class TopicFragment extends RootFragment {
         TopicFragment fragment = new TopicFragment();
         fragment.setArguments(args);
         return fragment;
+    }
+
+    private void createTopic() {
+        fab.setVisibility(View.GONE);
+        FragmentManager fm = getActivity().getSupportFragmentManager();
+        Fragment createTopicFragment = new CreateTopicFragment();
+        FragmentTransaction transaction = fm.beginTransaction();
+        transaction.addToBackStack(null).replace(R.id.main_act_frame_content, createTopicFragment, DisplayNewsFragment.DISPLAY_NEWS_TAG);
+        transaction.commit();
     }
 
     private void getTopicsList() {
@@ -104,6 +122,7 @@ public class TopicFragment extends RootFragment {
     }
 
     private void displayTopic(int position) {
+        fab.setVisibility(View.GONE);
         FragmentManager fm = getActivity().getSupportFragmentManager();
         Fragment displayTopicFragment = new DisplayTopicFragment();
         FragmentTransaction transaction = fm.beginTransaction();
@@ -134,7 +153,7 @@ public class TopicFragment extends RootFragment {
             if(position != -1 && topicsList.get(position).getAuthor().compareTo(PreferencesHelper.getInstance().getUserId()) == 0){
                 Log.d("LONGTOUCH", "AUTHOR");
                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                builder.setTitle("Actions");
+                builder.setTitle(R.string.actions);
                 builder.setItems(getResources().getStringArray(R.array.menu_admin), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {

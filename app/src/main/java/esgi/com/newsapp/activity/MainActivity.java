@@ -1,6 +1,7 @@
 package esgi.com.newsapp.activity;
 
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -9,6 +10,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
 
@@ -33,6 +35,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @BindView(R.id.main_act_frame_content)
     FrameLayout frameContent;
 
+    @BindView(R.id.fab)
+    FloatingActionButton fab;
+
     NewsFragment newsFragment;
     EditUserFragment editUserFragment;
     TopicFragment topicFragment;
@@ -52,6 +57,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         }
     };
+
+    public FloatingActionButton getFab() {
+        return fab;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

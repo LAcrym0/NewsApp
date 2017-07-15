@@ -14,7 +14,14 @@
     <string name="subscribe">Créer le compte</string>
     <string name="edit">Modifier</string>
     <string name="createpost">Créer le post</string>
-    <string name="createcomment">Créer la commentaire</string>
+    <string name="createcomment">Créer le commentaire</string>
+    <string name="createnews">Créer la news</string>
+    <string name="createtopic">Créer le topic</string>
+
+    <string name="news_creation">Création de news</string>
+    <string name="topic_creation">Création de topic</string>
+    <string name="comment_creation">Création de commentaire</string>
+    <string name="post_creation">Création de post</string>
 
     <string name="nav_news">News</string>
     <string name="nav_topics">Topics</string>
@@ -39,6 +46,13 @@
     <string name="error_login">Erreur de connexion</string>
     <string name="error_deleting">Erreur lors de la suppression</string>
     <string name="deleted">Supprimé</string>
+    <string name="actions">Actions</string>
+    <string name="news_created">News créée</string>
+    <string name="topic_created">Topic créé</string>
+    <string name="post_created">Post créé</string>
+    <string name="comment_created">Commentaire créé</string>
+    <string name="fill_title">Please fill the title</string>
+    <string name="fill_content">Please fill content</string>
     <array name="menu_admin">
         <item>Supprimer</item>
         <item>Modifier</item>

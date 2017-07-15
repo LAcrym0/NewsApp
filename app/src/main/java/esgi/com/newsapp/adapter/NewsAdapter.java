@@ -1,8 +1,6 @@
 package esgi.com.newsapp.adapter;
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +10,7 @@ import java.util.List;
 
 import esgi.com.newsapp.R;
 import esgi.com.newsapp.model.News;
+import esgi.com.newsapp.utils.DateConverter;
 
 /**
  * Created by Grunt on 12/07/2017.
@@ -19,10 +18,8 @@ import esgi.com.newsapp.model.News;
 
 public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<News> newsList;
-    private Context context;
 
-    public NewsAdapter(Context context, List<News> newsList) {
-        this.context = context;
+    public NewsAdapter(List<News> newsList) {
         this.newsList = newsList;
     }
 
@@ -36,6 +33,12 @@ public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         NewsViewHolder newsViewHolder = (NewsViewHolder) holder;
         newsViewHolder.tvTitle.setText(newsList.get(position).getTitle());
         newsViewHolder.tvContent.setText(newsList.get(position).getContent());
+        if (newsList.get(position).getDate() != null) {
+            newsViewHolder.tvDate.setText(DateConverter.toHumanReadableDate(newsList.get(position).getDate()));
+            newsViewHolder.tvDate.setVisibility(View.VISIBLE);
+        } else {
+            newsViewHolder.tvDate.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -49,12 +52,13 @@ public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     static private class NewsViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvTitle, tvContent;
+        private TextView tvTitle, tvContent, tvDate;
 
         NewsViewHolder(View itemView) {
             super(itemView);
             this.tvTitle = (TextView) itemView.findViewById(R.id.tv_title);
             this.tvContent = (TextView) itemView.findViewById(R.id.tv_content);
+            this.tvDate = (TextView) itemView.findViewById(R.id.tv_date);
         }
     }
 

@@ -22,6 +22,7 @@ import esgi.com.newsapp.model.Comment;
 import esgi.com.newsapp.model.Post;
 import esgi.com.newsapp.network.ApiResult;
 import esgi.com.newsapp.network.RetrofitSession;
+import esgi.com.newsapp.utils.DateConverter;
 
 /**
  * Created by junior on 13/07/2017.
@@ -53,16 +54,16 @@ public class CreateCommentForNewsFragment extends RootFragment {
 
     @Override
     public String getTitle() {
-        return null;
+        return getString(R.string.comment_creation);
     }
 
     private boolean verifyFields() {
         if (etTitle.getText().toString().isEmpty()) {
-            Toast.makeText(getContext(), "Please fill the title", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), R.string.fill_title, Toast.LENGTH_SHORT).show();
             return false;
         }
         if (etContent.getText().toString().isEmpty()) {
-            Toast.makeText(getContext(), "Please fill content", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), R.string.fill_content, Toast.LENGTH_SHORT).show();
             return false;
         }
         return true;
@@ -74,6 +75,7 @@ public class CreateCommentForNewsFragment extends RootFragment {
         comment.setTitle(etTitle.getText().toString());
         comment.setContent(etContent.getText().toString());
         comment.setNews(news);
+        comment.setDate(DateConverter.getCurrentFormattedDate());
         Log.d("DATE", DateFormat.getDateTimeInstance().format(new Date()));
 
         return comment;
@@ -87,7 +89,7 @@ public class CreateCommentForNewsFragment extends RootFragment {
         RetrofitSession.getInstance().getCommentService().createComment(comment, new ApiResult<Void>() {
             @Override
             public void success(Void res) {
-                Toast.makeText(getContext(), "Commentaire créé", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), R.string.comment_created, Toast.LENGTH_SHORT).show();
                 FragmentManager fm = getActivity().getSupportFragmentManager();
                 fm.popBackStackImmediate();
             }

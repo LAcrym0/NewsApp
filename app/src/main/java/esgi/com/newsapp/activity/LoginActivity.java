@@ -43,7 +43,6 @@ public class LoginActivity extends AppCompatActivity {
         RetrofitSession.getInstance().getUserService().login(auth, new ApiResult<String>() {
             @Override
             public void success(String res) {
-                //login(auth);
                 //necessary to get the user id...
                 getMe();
             }

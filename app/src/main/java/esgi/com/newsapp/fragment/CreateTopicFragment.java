@@ -2,14 +2,11 @@ package esgi.com.newsapp.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -20,42 +17,37 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import esgi.com.newsapp.R;
-import esgi.com.newsapp.model.Post;
+import esgi.com.newsapp.model.Topic;
 import esgi.com.newsapp.network.ApiResult;
 import esgi.com.newsapp.network.RetrofitSession;
 import esgi.com.newsapp.utils.DateConverter;
 
 /**
- * Created by junior on 13/07/2017.
+ * Created by Grunt on 15/07/2017.
  */
 
-public class CreatePostForTopicFragment extends RootFragment {
+public class CreateTopicFragment extends RootFragment {
 
-    @BindView(R.id.et_content_post)
+    @BindView(R.id.et_content_topic)
     public EditText etContent;
 
-    @BindView(R.id.et_title_post)
+    @BindView(R.id.et_title_topic)
     public EditText etTitle;
-
-    public String topic;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
 
-        View view = inflater.inflate(R.layout.fragment_create_post, container, false);
+        View view = inflater.inflate(R.layout.fragment_create_topic, container, false);
         ButterKnife.bind(this, view);
-
-        Bundle bundle = getArguments();
-        topic = bundle.getString(getString(R.string.bundle_topic_id));
 
         return view;
     }
 
     @Override
     public String getTitle() {
-        return getString(R.string.post_creation);
+        return getString(R.string.topic_creation);
     }
 
     private boolean verifyFields() {
@@ -71,26 +63,25 @@ public class CreatePostForTopicFragment extends RootFragment {
     }
 
 
-    private Post getPostFromForm(){
-        Post post = new Post();
-        post.setTitle(etTitle.getText().toString());
-        post.setContent(etContent.getText().toString());
-        post.setTopic(topic);
-        post.setDate(DateConverter.getCurrentFormattedDate());
+    private Topic getTopicFromForm(){
+        Topic topic = new Topic();
+        topic.setTitle(etTitle.getText().toString());
+        topic.setContent(etContent.getText().toString());
+        topic.setDate(DateConverter.getCurrentFormattedDate());
         Log.d("DATE", DateFormat.getDateTimeInstance().format(new Date()));
 
-        return post;
+        return topic;
     }
 
-    @OnClick(R.id.btn_create_post)
-    public void createPost() {
+    @OnClick(R.id.btn_create_topic)
+    public void createTopic() {
         if (!verifyFields())
             return;
-        Post postCreate = getPostFromForm();
-        RetrofitSession.getInstance().getPostService().createPost(postCreate, new ApiResult<Void>() {
+        final Topic topic = getTopicFromForm();
+        RetrofitSession.getInstance().getTopicService().createTopic(topic, new ApiResult<Void>() {
             @Override
             public void success(Void res) {
-                Toast.makeText(getContext(), R.string.post_created, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), R.string.topic_created, Toast.LENGTH_SHORT).show();
                 FragmentManager fm = getActivity().getSupportFragmentManager();
                 fm.popBackStackImmediate();
             }
