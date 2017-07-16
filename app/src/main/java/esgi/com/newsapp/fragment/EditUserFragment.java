@@ -91,6 +91,7 @@ public class EditUserFragment extends RootFragment {
         newUser.setFirstname(etFirstname.getText().toString());
         newUser.setLastname(etLastname.getText().toString());
         newUser.setPassword(etPassword.getText().toString());
+        newUser.setEmail(etEmail.getText().toString());
         return newUser;
     }
 
