@@ -27,6 +27,7 @@ public class NewsService {
     private static final int HTTP_200 = 200;
     private static final int HTTP_201 = 201;
     private static final int HTTP_204 = 204;
+    private static final int OFFLINE = -22;
 
     NewsService(Retrofit retrofit) {
         newsService = retrofit.create(INewsService.class);
@@ -66,7 +67,8 @@ public class NewsService {
                 }
             });
         } else {
-            onConnectionError(callback);
+            RealmManager.getNewsDAO().createOrUpdateNews(news);
+            callback.error(OFFLINE, "Créé en local");
         }
     }
 
@@ -108,6 +110,24 @@ public class NewsService {
         }
     }
 
+    public void sendUnsyncedContent() {
+        final List<News> newsList = RealmManager.getNewsDAO().getNewsOff();
+        for (int i = 0; i < newsList.size(); i ++) {
+            final int finalI = i;
+            RetrofitSession.getInstance().getNewsService().createNews(newsList.get(finalI), new ApiResult<Void>() {
+                    @Override
+                    public void success(Void res) {
+                        RealmManager.getNewsDAO().deleteOfflineNews(newsList.get(finalI).getBddId());
+                    }
+
+                    @Override
+                    public void error(int code, String message) {
+
+                    }
+                });
+        }
+    }
+
     /**
      * Method used to get news
      * @param callback the callback that returns the news list for a success or the return code + message for a failure
@@ -138,9 +158,10 @@ public class NewsService {
                 }
             });
         } else {
-           // onConnectionError(callback);
+            // onConnectionError(callback);
 
             List<News> newsList = RealmManager.getNewsDAO().getList();
+            Log.d("NEWSLIST", "GOT THE LIST");
             if (!newsList.isEmpty()){
                 callback.success(newsList);
             }else{
@@ -157,7 +178,7 @@ public class NewsService {
      * Method used to delete a news
      * @param callback the callback that returns nothing for a success or the return code + message for a failure
      */
-    public void deleteNews(String id, final ApiResult<Void> callback) {
+    public void deleteNews(final String id, final ApiResult<Void> callback) {
         if (Network.isConnectionAvailable()) {
             Call<Void> call = this.newsService.deleteNews("Bearer " + PreferencesHelper.getInstance().getToken(), id);
             call.enqueue(new Callback<Void>() {
@@ -169,6 +190,7 @@ public class NewsService {
                         Log.d(getClass().getSimpleName(), "Return content : " + response.body());
                         Log.d(getClass().getSimpleName(), "Deleted news");
                         Void values = response.body();
+                        RealmManager.getNewsDAO().deleteNews(id);
                         callback.success(values);
                     } else {
                         callback.error(statusCode, response.message());

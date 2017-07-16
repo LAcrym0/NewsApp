@@ -7,7 +7,6 @@ import java.util.List;
 import esgi.com.newsapp.R;
 import esgi.com.newsapp.database.RealmManager;
 import esgi.com.newsapp.model.Post;
-import esgi.com.newsapp.model.Topic;
 import esgi.com.newsapp.utils.Network;
 import esgi.com.newsapp.utils.PreferencesHelper;
 import esgi.com.newsapp.utils.Utils;
@@ -27,6 +26,7 @@ public class PostService {
     private static final int HTTP_200 = 200;
     private static final int HTTP_201 = 201;
     private static final int HTTP_204 = 204;
+    private static final int OFFLINE = -22;
 
     PostService(Retrofit retrofit) {
         postService = retrofit.create(IPostService.class);
@@ -58,19 +58,19 @@ public class PostService {
                     }  else {
 
                         callback.error(statusCode, response.message());
-                        RealmManager.getPostDAO().createPost(post);
+                        RealmManager.getPostDAO().createOrUpdatePost(post);
                     }
                 }
 
                 @Override
                 public void onFailure(Call<Void> call, Throwable t) {
-                    Log.e("PostService", "Error while calling the 'createPost' method !", t);
+                    Log.e("PostService", "Error while calling the 'createOrUpdatePost' method !", t);
                     callback.error(-1, t.getLocalizedMessage());
                 }
             });
         } else {
-            RealmManager.getPostDAO().createPost(post);
-            onConnectionError(callback);
+            RealmManager.getPostDAO().createOrUpdatePost(post);
+            callback.error(OFFLINE, "Créé en local");
         }
     }
 
@@ -110,6 +110,24 @@ public class PostService {
             });
         } else {
             onConnectionError(callback);
+        }
+    }
+
+    public void sendUnsyncedContent() {
+        final List<Post> postList = RealmManager.getPostDAO().getPostOff();
+        for (int i = 0; i < postList.size(); i ++){
+            final int finalI = i;
+            RetrofitSession.getInstance().getPostService().createPost(postList.get(i), new ApiResult<Void>() {
+                @Override
+                public void success(Void res) {
+                    RealmManager.getPostDAO().deleteOfflinePost(postList.get(finalI).getBddId());
+                }
+
+                @Override
+                public void error(int code, String message) {
+
+                }
+            });
         }
     }
 
@@ -198,7 +216,7 @@ public class PostService {
      * Method used to delete a post
      * @param callback the callback that returns nothing for a success or the return code + message for a failure
      */
-    public void deletePost(String id, final ApiResult<Void> callback) {
+    public void deletePost(final String id, final ApiResult<Void> callback) {
         if (Network.isConnectionAvailable()) {
             Call<Void> call = this.postService.deletePost("Bearer " + PreferencesHelper.getInstance().getToken(), id);
             call.enqueue(new Callback<Void>() {
@@ -210,6 +228,7 @@ public class PostService {
                         Log.d(getClass().getSimpleName(), "Return content : " + response.body());
                         Log.d(getClass().getSimpleName(), "Deleted post");
                         Void values = response.body();
+                        RealmManager.getPostDAO().deletePost(id);
                         callback.success(values);
                     } else {
                         callback.error(statusCode, response.message());

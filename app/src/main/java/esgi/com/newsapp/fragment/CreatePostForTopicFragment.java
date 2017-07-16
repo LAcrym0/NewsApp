@@ -2,14 +2,11 @@ package esgi.com.newsapp.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -30,6 +27,7 @@ import esgi.com.newsapp.utils.DateConverter;
  */
 
 public class CreatePostForTopicFragment extends RootFragment {
+    private final int OFFLINE = -22;
 
     @BindView(R.id.et_content_post)
     public EditText etContent;
@@ -97,6 +95,11 @@ public class CreatePostForTopicFragment extends RootFragment {
 
             @Override
             public void error(int code, String message) {
+                Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+                if (code == OFFLINE) {
+                    FragmentManager fm = getActivity().getSupportFragmentManager();
+                    fm.popBackStackImmediate();
+                }
                 Log.d("FAIL", message);
             }
         });

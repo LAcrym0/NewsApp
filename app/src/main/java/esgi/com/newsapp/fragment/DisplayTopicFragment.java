@@ -143,7 +143,7 @@ public class DisplayTopicFragment extends RootFragment {
             View view = rvPosts.findChildViewUnder(e.getX(), e.getY());
             final int position = rvPosts.getChildLayoutPosition(view);
             Log.d("LONGTOUCHPOSITION", String.valueOf(position));
-            if(position != -1 && postsList.get(position).getAuthor().compareTo(PreferencesHelper.getInstance().getUserId()) == 0){
+            if(position != -1 && postsList.get(position).getAuthor() != null && postsList.get(position).getAuthor().compareTo(PreferencesHelper.getInstance().getUserId()) == 0){
                 Log.d("LONGTOUCH", "AUTHOR");
                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                 builder.setTitle(getString(R.string.actions));

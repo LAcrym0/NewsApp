@@ -19,6 +19,8 @@ public class PreferencesHelper {
     private SharedPreferences sharedPreferences;
     private static final String AUTH_TOKEN_NAME = "NewsAppAuthToken";
     private static final String USER_ID = "UserId";
+    private static final String NEED_SYNC = "NeedSync";
+    private static final String LAST_NETWORK_STATE = "LastNetworkState";
 
     //only method to call because the constructor is private
     public static PreferencesHelper getInstance() {
@@ -68,5 +70,35 @@ public class PreferencesHelper {
      */
     public void setUserId(String userId) {
         INSTANCE.sharedPreferences.edit().putString(USER_ID, userId).apply();
+    }
+
+    /**
+     * Method used to save if the app needs to sync into SharedPreferences
+     */
+    public void setNeedSync(boolean needSync) {
+        INSTANCE.sharedPreferences.edit().putBoolean(NEED_SYNC, needSync).apply();
+    }
+
+    /**
+     * Method used to know if a sync is needed from SharedPreferences
+     * @return the boolean containing sync need
+     */
+    public boolean getNeedSync() {
+        return INSTANCE.sharedPreferences != null && INSTANCE.sharedPreferences.getBoolean(NEED_SYNC, false);
+    }
+
+    /**
+     * Method used to save if the last network state into SharedPreferences
+     */
+    public void setLastNetworkState(boolean available) {
+        INSTANCE.sharedPreferences.edit().putBoolean(LAST_NETWORK_STATE, available).apply();
+    }
+
+    /**
+     * Method used to know the last network state from SharedPreferences
+     * @return the boolean containing syncing state
+     */
+    public boolean getLastNetworkState() {
+        return INSTANCE.sharedPreferences != null && INSTANCE.sharedPreferences.getBoolean(LAST_NETWORK_STATE, false);
     }
 }

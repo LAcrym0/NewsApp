@@ -17,9 +17,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import esgi.com.newsapp.R;
-import esgi.com.newsapp.database.RealmManager;
 import esgi.com.newsapp.model.Comment;
-import esgi.com.newsapp.model.Post;
 import esgi.com.newsapp.network.ApiResult;
 import esgi.com.newsapp.network.RetrofitSession;
 import esgi.com.newsapp.utils.DateConverter;
@@ -29,6 +27,7 @@ import esgi.com.newsapp.utils.DateConverter;
  */
 
 public class CreateCommentForNewsFragment extends RootFragment {
+    private final int OFFLINE = -22;
 
     @BindView(R.id.et_content_comment)
     public EditText etContent;
@@ -96,6 +95,11 @@ public class CreateCommentForNewsFragment extends RootFragment {
 
             @Override
             public void error(int code, String message) {
+                Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+                if (code == OFFLINE) {
+                    FragmentManager fm = getActivity().getSupportFragmentManager();
+                    fm.popBackStackImmediate();
+                }
                 Log.d("FAIL", message);
             }
         });

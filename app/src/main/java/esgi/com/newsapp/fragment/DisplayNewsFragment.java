@@ -62,10 +62,10 @@ public class DisplayNewsFragment extends RootFragment {
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_display_news, container, false);
         ButterKnife.bind(this, view);
-        sendCom();
+
         Bundle bundle = getArguments();
         title = bundle.getString(getString(R.string.bundle_news_title));
-         id = bundle.getString(getString(R.string.bundle_news_id));
+        id = bundle.getString(getString(R.string.bundle_news_id));
         String content = bundle.getString(getString(R.string.bundle_news_content));
         tvContent.setText(content);
 
@@ -125,7 +125,7 @@ public class DisplayNewsFragment extends RootFragment {
             View view = rvComs.findChildViewUnder(e.getX(), e.getY());
             final int position = rvComs.getChildLayoutPosition(view);
             Log.d("LONGTOUCHPOSITION", String.valueOf(position));
-            if(position != -1 && commentsList.get(position).getAuthor().compareTo(PreferencesHelper.getInstance().getUserId()) == 0){
+            if(position != -1 && commentsList.get(position).getAuthor() != null && commentsList.get(position).getAuthor().compareTo(PreferencesHelper.getInstance().getUserId()) == 0){
                 Log.d("LONGTOUCH", "AUTHOR");
                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                 builder.setTitle(getString(R.string.actions));
@@ -164,25 +164,6 @@ public class DisplayNewsFragment extends RootFragment {
                 Toast.makeText(getContext(), getString(R.string.error_deleting), Toast.LENGTH_SHORT).show();
             }
         });
-    }
-
-    private void sendCom(){
-        if(Network.isConnectionAvailable()){
-            final List<Comment> commentList = RealmManager.getCommentDAO().getCommentOff();
-            for (int i = 0; i < commentList.size(); i ++){
-                RetrofitSession.getInstance().getCommentService().createComment(commentList.get(i), new ApiResult<Void>() {
-                    @Override
-                    public void success(Void res) {
-                        Toast.makeText(getContext(), "Com en mémoire envoyé", Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void error(int code, String message) {
-                        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-        }
     }
 
     @Override

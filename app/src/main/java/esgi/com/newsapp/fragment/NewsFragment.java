@@ -150,7 +150,7 @@ public class NewsFragment extends RootFragment {
             View view = rvNews.findChildViewUnder(e.getX(), e.getY());
             final int position = rvNews.getChildLayoutPosition(view);
             Log.d("LONGTOUCHPOSITION", String.valueOf(position));
-            if(position != -1 && newsList.get(position).getAuthor().compareTo(PreferencesHelper.getInstance().getUserId()) == 0){
+            if(position != -1 && newsList.get(position).getAuthor() != null && newsList.get(position).getAuthor().compareTo(PreferencesHelper.getInstance().getUserId()) == 0){
                 Log.d("LONGTOUCH", "AUTHOR");
                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                 builder.setTitle(getString(R.string.actions));

@@ -2,6 +2,7 @@ package esgi.com.newsapp.model;
 
 import com.google.gson.annotations.SerializedName;
 
+import esgi.com.newsapp.network.Exclude;
 import io.realm.RealmObject;
 import io.realm.annotations.Index;
 import io.realm.annotations.PrimaryKey;
@@ -15,10 +16,12 @@ public class Topic extends RealmObject {
 
 
     @SerializedName("_id")
-    @Index
-    @PrimaryKey
     private String id;
 
+    @Exclude
+    @Index
+    @PrimaryKey
+    private String bddId;
 
     private String author;
 
@@ -28,6 +31,9 @@ public class Topic extends RealmObject {
 
     @Required
     private String content;
+
+    @Exclude
+    private boolean synced;
 
     private String date;
 
@@ -79,5 +85,21 @@ public class Topic extends RealmObject {
 
     public void setAuthor(String author) {
         this.author = author;
+    }
+
+    public boolean isSynced() {
+        return synced;
+    }
+
+    public void setSynced(boolean synced) {
+        this.synced = synced;
+    }
+
+    public String getBddId() {
+        return bddId;
+    }
+
+    public void setBddId(String bddId) {
+        this.bddId = bddId;
     }
 }

@@ -16,9 +16,12 @@ public class Comment extends RealmObject{
 
 
     @SerializedName("_id")
+    private String id;
+
+    @Exclude
     @PrimaryKey
     @Index
-    private String id;
+    private String bddId;
 
     @Index
     private String title;
@@ -94,6 +97,14 @@ public class Comment extends RealmObject{
 
     public String getAuthor() {
         return author;
+    }
+
+    public String getBddId() {
+        return bddId;
+    }
+
+    public void setBddId(String bddId) {
+        this.bddId = bddId;
     }
 }
 

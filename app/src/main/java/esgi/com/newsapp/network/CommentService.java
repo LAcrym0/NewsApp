@@ -7,7 +7,6 @@ import java.util.List;
 import esgi.com.newsapp.R;
 import esgi.com.newsapp.database.RealmManager;
 import esgi.com.newsapp.model.Comment;
-import esgi.com.newsapp.model.Post;
 import esgi.com.newsapp.utils.Network;
 import esgi.com.newsapp.utils.PreferencesHelper;
 import esgi.com.newsapp.utils.Utils;
@@ -61,27 +60,27 @@ public class CommentService {
                         isCommentOff(comment);
                         callback.success(value);
                     }  else {
-                        RealmManager.getCommentDAO().createComment(comment);
+                        RealmManager.getCommentDAO().createOrUpdateComment(comment);
                         callback.error(statusCode, response.message());
                     }
                 }
 
                 @Override
                 public void onFailure(Call<Void> call, Throwable t) {
-                    Log.e("CommentService", "Error while calling the 'createComment' method !", t);
+                    Log.e("CommentService", "Error while calling the 'createOrUpdateComment' method !", t);
                     callback.error(-1, t.getLocalizedMessage());
                 }
             });
         } else {
-            RealmManager.getCommentDAO().createComment(comment);
-            onConnectionError(callback);
+            RealmManager.getCommentDAO().createOrUpdateComment(comment);
+            callback.error(-22, "Créé en local");
         }
     }
 
     private void isCommentOff(Comment comment){
          if(comment.getSynced() == null){
             Realm realm = RealmManager.getRealmInstance();
-            final RealmResults<Comment> commentRealmResults = realm.where(Comment.class).equalTo("id",comment.getId()).findAll();
+            final RealmResults<Comment> commentRealmResults = realm.where(Comment.class).equalTo("id", comment.getId()).findAll();
             if(!commentRealmResults.isEmpty()){
                 realm.executeTransactionAsync(new Realm.Transaction() {
                     @Override
@@ -101,6 +100,24 @@ public class CommentService {
                     }
                 });
             }
+        }
+    }
+
+    public void sendUnsyncedContent() {
+        final List<Comment> commentList = RealmManager.getCommentDAO().getCommentOff();
+        for (int i = 0; i < commentList.size(); i ++) {
+            final int finalI = i;
+            RetrofitSession.getInstance().getCommentService().createComment(commentList.get(finalI), new ApiResult<Void>() {
+                @Override
+                public void success(Void res) {
+                    RealmManager.getCommentDAO().deleteOfflineComment(commentList.get(finalI).getBddId());
+                }
+
+                @Override
+                public void error(int code, String message) {
+
+                }
+            });
         }
     }
 
@@ -226,7 +243,7 @@ public class CommentService {
      * Method used to delete a comment
      * @param callback the callback that returns nothing for a success or the return code + message for a failure
      */
-    public void deleteComment(String id, final ApiResult<Void> callback) {
+    public void deleteComment(final String id, final ApiResult<Void> callback) {
         if (Network.isConnectionAvailable()) {
             Call<Void> call = this.commentService.deleteComment("Bearer " + PreferencesHelper.getInstance().getToken(), id);
             call.enqueue(new Callback<Void>() {
@@ -238,6 +255,7 @@ public class CommentService {
                         Log.d(getClass().getSimpleName(), "Return content : " + response.body());
                         Log.d(getClass().getSimpleName(), "Deleted comment");
                         Void values = response.body();
+                        RealmManager.getCommentDAO().deleteComment(id);
                         callback.success(values);
                     } else {
                         callback.error(statusCode, response.message());

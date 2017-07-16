@@ -27,6 +27,7 @@ import esgi.com.newsapp.utils.DateConverter;
  */
 
 public class CreateTopicFragment extends RootFragment {
+    private final int OFFLINE = -22;
 
     @BindView(R.id.et_content_topic)
     public EditText etContent;
@@ -88,6 +89,11 @@ public class CreateTopicFragment extends RootFragment {
 
             @Override
             public void error(int code, String message) {
+                Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+                if (code == OFFLINE) {
+                    FragmentManager fm = getActivity().getSupportFragmentManager();
+                    fm.popBackStackImmediate();
+                }
                 Log.d("FAIL", message);
             }
         });

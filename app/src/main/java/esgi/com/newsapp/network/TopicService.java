@@ -26,6 +26,7 @@ public class TopicService {
     private static final int HTTP_200 = 200;
     private static final int HTTP_201 = 201;
     private static final int HTTP_204 = 204;
+    private static final int OFFLINE = -22;
 
     TopicService(Retrofit retrofit) {
 
@@ -68,7 +69,8 @@ public class TopicService {
                 }
             });
         } else {
-            onConnectionError(callback);
+            RealmManager.getTopicDAO().createOrUpdateTopic(topic);
+            callback.error(OFFLINE, "Créé en local");
         }
     }
 
@@ -159,7 +161,7 @@ public class TopicService {
      * Method used to delete a topic
      * @param callback the callback that returns nothing for a success or the return code + message for a failure
      */
-    public void deleteTopic(String id, final ApiResult<Void> callback) {
+    public void deleteTopic(final String id, final ApiResult<Void> callback) {
         if (Network.isConnectionAvailable()) {
             Call<Void> call = this.topicService.deleteTopic("Bearer " + PreferencesHelper.getInstance().getToken(), id);
             call.enqueue(new Callback<Void>() {
@@ -171,6 +173,7 @@ public class TopicService {
                         Log.d(getClass().getSimpleName(), "Return content : " + response.body());
                         Log.d(getClass().getSimpleName(), "Deleted topic");
                         Void values = response.body();
+                        RealmManager.getTopicDAO().deleteTopic(id);
                         callback.success(values);
                     } else {
                         callback.error(statusCode, response.message());
@@ -185,6 +188,24 @@ public class TopicService {
             });
         } else {
             onConnectionError(callback);
+        }
+    }
+
+    public void sendUnsyncedContent() {
+        final List<Topic> topicList = RealmManager.getTopicDAO().getTopicOff();
+        for (int i = 0; i < topicList.size(); i ++){
+            final int finalI = i;
+            RetrofitSession.getInstance().getTopicService().createTopic(topicList.get(i), new ApiResult<Void>() {
+                @Override
+                public void success(Void res) {
+                    RealmManager.getTopicDAO().deleteOfflineTopic(topicList.get(finalI).getBddId());
+                }
+
+                @Override
+                public void error(int code, String message) {
+
+                }
+            });
         }
     }
 

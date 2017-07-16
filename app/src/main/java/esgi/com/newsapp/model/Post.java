@@ -14,10 +14,13 @@ import io.realm.annotations.Required;
 
 public class Post extends RealmObject  {
 
-    @Index
-    @PrimaryKey
     @SerializedName("_id")
     private String id;
+
+    @Exclude
+    @Index
+    @PrimaryKey
+    private String bddId;
 
     @Required
     @Index
@@ -100,4 +103,12 @@ public class Post extends RealmObject  {
     public void setSynced(Boolean synced){this.synced = synced;}
 
     public Boolean getSynced(){return synced;}
+
+    public String getBddId() {
+        return bddId;
+    }
+
+    public void setBddId(String bddId) {
+        this.bddId = bddId;
+    }
 }
