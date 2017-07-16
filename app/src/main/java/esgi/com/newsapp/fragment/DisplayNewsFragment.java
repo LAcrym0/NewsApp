@@ -27,11 +27,9 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import esgi.com.newsapp.R;
 import esgi.com.newsapp.adapter.CommentAdapter;
-import esgi.com.newsapp.database.RealmManager;
 import esgi.com.newsapp.model.Comment;
 import esgi.com.newsapp.network.ApiResult;
 import esgi.com.newsapp.network.RetrofitSession;
-import esgi.com.newsapp.utils.Network;
 import esgi.com.newsapp.utils.PreferencesHelper;
 
 /**
@@ -40,6 +38,7 @@ import esgi.com.newsapp.utils.PreferencesHelper;
 
 public class DisplayNewsFragment extends RootFragment {
     public static String DISPLAY_NEWS_TAG = "DISPLAYNEWS";
+    private static final int TAG_COMMENT = 1;
 
     private String title;
     private List<Comment> commentsList;
@@ -52,7 +51,7 @@ public class DisplayNewsFragment extends RootFragment {
     public RecyclerView rvComs;
 
     @BindView(R.id.fab_news)
-    public FloatingActionButton floatingActionButton;
+    public FloatingActionButton fab;
 
     String id;
 
@@ -148,7 +147,18 @@ public class DisplayNewsFragment extends RootFragment {
     }
 
     private void editComWithPosition(final int position) {
-        //todo implement news edition
+        fab.setVisibility(View.GONE);
+        FragmentManager fm = getActivity().getSupportFragmentManager();
+        Fragment editFragment = new EditFragment();
+        FragmentTransaction transaction = fm.beginTransaction();
+        Bundle bundle = new Bundle();
+        bundle.putString(getString(R.string.bundle_id), commentsList.get(position).getId());
+        bundle.putString(getString(R.string.bundle_content), commentsList.get(position).getContent());
+        bundle.putString(getString(R.string.bundle_title), commentsList.get(position).getTitle());
+        bundle.putInt(getString(R.string.bundle_type), TAG_COMMENT);
+        editFragment.setArguments(bundle);
+        transaction.addToBackStack(null).replace(R.id.main_act_frame_content, editFragment, DisplayTopicFragment.DISPLAY_TOPIC_TAG);
+        transaction.commit();
     }
 
     private void deleteComForPosition(final int position) {

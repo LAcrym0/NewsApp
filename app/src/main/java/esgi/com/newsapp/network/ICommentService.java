@@ -3,6 +3,7 @@ package esgi.com.newsapp.network;
 import java.util.List;
 
 import esgi.com.newsapp.model.Comment;
+import esgi.com.newsapp.model.EditObject;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
@@ -37,7 +38,7 @@ public interface ICommentService {
 
     @PUT("/comments/{id}/")
     @Headers("Content-Type: application/json")
-    Call<Void> editComment(@Header("Authorization") String token, @Path("id") String id, @Body Comment comment);
+    Call<Void> editComment(@Header("Authorization") String token, @Path("id") String id, @Body EditObject comment);
 
     @DELETE("/comments/{id}/")
     @Headers("Content-Type: application/json")

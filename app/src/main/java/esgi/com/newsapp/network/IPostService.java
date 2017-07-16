@@ -2,6 +2,7 @@ package esgi.com.newsapp.network;
 
 import java.util.List;
 
+import esgi.com.newsapp.model.EditObject;
 import esgi.com.newsapp.model.Post;
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -37,7 +38,7 @@ public interface IPostService {
 
     @PUT("/posts/{id}/")
     @Headers("Content-Type: application/json")
-    Call<Void> editPost(@Header("Authorization") String token, @Path("id") String id, @Body Post post);
+    Call<Void> editPost(@Header("Authorization") String token, @Path("id") String id, @Body EditObject post);
 
     @DELETE("/posts/{id}/")
     @Headers("Content-Type: application/json")

@@ -37,6 +37,7 @@ import esgi.com.newsapp.utils.PreferencesHelper;
 
 public class DisplayTopicFragment extends RootFragment {
     public static String DISPLAY_TOPIC_TAG = "DISPLAYTOPIC";
+    private static final int TAG_POST = 4;
 
     private String title;
     private List<Post> postsList;
@@ -164,7 +165,18 @@ public class DisplayTopicFragment extends RootFragment {
     }
 
     private void editPostWithPosition(final int position) {
-        //todo implement news edition
+        fab.setVisibility(View.GONE);
+        FragmentManager fm = getActivity().getSupportFragmentManager();
+        Fragment editFragment = new EditFragment();
+        FragmentTransaction transaction = fm.beginTransaction();
+        Bundle bundle = new Bundle();
+        bundle.putString(getString(R.string.bundle_id), postsList.get(position).getId());
+        bundle.putString(getString(R.string.bundle_content), postsList.get(position).getContent());
+        bundle.putString(getString(R.string.bundle_title), postsList.get(position).getTitle());
+        bundle.putInt(getString(R.string.bundle_type), TAG_POST);
+        editFragment.setArguments(bundle);
+        transaction.addToBackStack(null).replace(R.id.main_act_frame_content, editFragment, DisplayTopicFragment.DISPLAY_TOPIC_TAG);
+        transaction.commit();
     }
 
     private void deletePostForPosition(final int position) {

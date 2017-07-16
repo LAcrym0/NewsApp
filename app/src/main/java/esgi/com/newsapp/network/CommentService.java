@@ -7,6 +7,7 @@ import java.util.List;
 import esgi.com.newsapp.R;
 import esgi.com.newsapp.database.RealmManager;
 import esgi.com.newsapp.model.Comment;
+import esgi.com.newsapp.model.EditObject;
 import esgi.com.newsapp.utils.Network;
 import esgi.com.newsapp.utils.PreferencesHelper;
 import esgi.com.newsapp.utils.Utils;
@@ -281,7 +282,7 @@ public class CommentService {
      * Method used to edit a comment
      * @param callback the callback that returns nothing for a success or the return code + message for a failure
      */
-    public void editComment(String id, Comment comment, final ApiResult<Void> callback) {
+    public void editComment(String id, EditObject comment, final ApiResult<Void> callback) {
         if (Network.isConnectionAvailable()) {
             Call<Void> call = this.commentService.editComment("Bearer " + PreferencesHelper.getInstance().getToken(), id, comment);
             call.enqueue(new Callback<Void>() {

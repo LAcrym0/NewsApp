@@ -33,6 +33,7 @@ import esgi.com.newsapp.network.RetrofitSession;
 import esgi.com.newsapp.utils.PreferencesHelper;
 
 public class NewsFragment extends RootFragment {
+    private static final int TAG_NEWS = 3;
 
     @BindView(R.id.progress)
     public ProgressBar progressBar;
@@ -173,7 +174,18 @@ public class NewsFragment extends RootFragment {
     }
 
     private void editNewsWithPosition(final int position) {
-        //todo implement news edition
+        fab.setVisibility(View.GONE);
+        FragmentManager fm = getActivity().getSupportFragmentManager();
+        Fragment editFragment = new EditFragment();
+        FragmentTransaction transaction = fm.beginTransaction();
+        Bundle bundle = new Bundle();
+        bundle.putString(getString(R.string.bundle_id), newsList.get(position).getId());
+        bundle.putString(getString(R.string.bundle_content), newsList.get(position).getContent());
+        bundle.putString(getString(R.string.bundle_title), newsList.get(position).getTitle());
+        bundle.putInt(getString(R.string.bundle_type), TAG_NEWS);
+        editFragment.setArguments(bundle);
+        transaction.addToBackStack(null).replace(R.id.main_act_frame_content, editFragment, DisplayTopicFragment.DISPLAY_TOPIC_TAG);
+        transaction.commit();
     }
 
     private void deleteNewsForPosition(final int position) {
@@ -210,97 +222,6 @@ public class NewsFragment extends RootFragment {
             }
         });
     }
-
-
-    /*private void setUpGestureListener() {
-        final GestureDetectorCompat detector = new GestureDetectorCompat(getActivity(), new NewsFragment.RecyclerViewOnGestureListener());
-        rvNews.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
-            @Override
-            public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
-                detector.onTouchEvent(e);
-                return false;
-            }
-
-            @Override
-            public void onTouchEvent(RecyclerView rv, MotionEvent e) {
-
-            }
-
-            @Override
-            public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
-            }
-        });
-
-        ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0,ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
-            @Override
-            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-                return false;
-            }
-
-            @Override
-            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-
-                final int position = viewHolder.getAdapterPosition();
-                if(position != -1){
-                    if (newsList.get(position).getAuthor().compareTo(PreferencesHelper.getInstance().getUserId()) == 0) {
-                        Log.d("SWIPED", String.valueOf(position));
-                        if (direction == ItemTouchHelper.LEFT) {
-                            RetrofitSession.getInstance().getNewsService().deleteNews(newsList.get(position).getId(), new ApiResult<Void>() {
-                                @Override
-                                public void success(Void res) {
-                                    adapter.remove(position);
-                                }
-
-                                @Override
-                                public void error(int code, String message) {
-
-                                }
-                            });
-                        }
-                    }
-                }
-
-
-
-            }
-
-            @Override
-            public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
-
-                Bitmap icon;
-                if(actionState == ItemTouchHelper.ACTION_STATE_SWIPE){
-
-                    View itemView = viewHolder.itemView;
-                    float height = (float) itemView.getBottom() - (float) itemView.getTop();
-                    float width = height / 3;
-
-                    if(dX > 0){
-                        p.setColor(Color.parseColor("#388E3C"));
-                        RectF background = new RectF((float) itemView.getLeft(), (float) itemView.getTop(), dX,(float) itemView.getBottom());
-                        c.drawRect(background,p);
-                        icon = BitmapFactory.decodeResource(getResources(),R.mipmap.ic_mode_edit_black_24dp );
-                        RectF icon_dest = new RectF((float) itemView.getLeft() + width ,(float) itemView.getTop() + width,(float) itemView.getLeft()+ 2*width,(float)itemView.getBottom() - width);
-                        c.drawBitmap(icon,null,icon_dest,p);
-                    } else {
-                        p.setColor(Color.parseColor("#D32F2F"));
-                        RectF background = new RectF((float) itemView.getRight() + dX, (float) itemView.getTop(),(float) itemView.getRight(), (float) itemView.getBottom());
-                        c.drawRect(background,p);
-                        icon = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_delete_black_24dp);
-                        RectF icon_dest = new RectF((float) itemView.getRight() - 2*width ,(float) itemView.getTop() + width,(float) itemView.getRight() - width,(float)itemView.getBottom() - width);
-                        c.drawBitmap(icon,null,icon_dest,p);
-                    }
-                }
-
-                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
-            }
-        };
-
-
-
-
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
-        itemTouchHelper.attachToRecyclerView(rvNews);
-    }*/
 
     @Override
     public String getTitle() {

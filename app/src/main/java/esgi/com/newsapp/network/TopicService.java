@@ -6,6 +6,7 @@ import java.util.List;
 
 import esgi.com.newsapp.R;
 import esgi.com.newsapp.database.RealmManager;
+import esgi.com.newsapp.model.EditObject;
 import esgi.com.newsapp.model.Topic;
 import esgi.com.newsapp.utils.Network;
 import esgi.com.newsapp.utils.PreferencesHelper;
@@ -217,7 +218,7 @@ public class TopicService {
      * Method used to edit a topic
      * @param callback the callback that returns nothing for a success or the return code + message for a failure
      */
-    public void editTopic(String id, Topic topic, final ApiResult<Void> callback) {
+    public void editTopic(String id, EditObject topic, final ApiResult<Void> callback) {
         if (Network.isConnectionAvailable()) {
             Call<Void> call = this.topicService.editTopic("Bearer " + PreferencesHelper.getInstance().getToken(), id, topic);
             call.enqueue(new Callback<Void>() {

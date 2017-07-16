@@ -6,6 +6,7 @@ import java.util.List;
 
 import esgi.com.newsapp.R;
 import esgi.com.newsapp.database.RealmManager;
+import esgi.com.newsapp.model.EditObject;
 import esgi.com.newsapp.model.Post;
 import esgi.com.newsapp.utils.Network;
 import esgi.com.newsapp.utils.PreferencesHelper;
@@ -254,7 +255,7 @@ public class PostService {
      * Method used to edit a post
      * @param callback the callback that returns nothing for a success or the return code + message for a failure
      */
-    public void editPost(String id, Post post, final ApiResult<Void> callback) {
+    public void editPost(String id, EditObject post, final ApiResult<Void> callback) {
         if (Network.isConnectionAvailable()) {
             Call<Void> call = this.postService.editPost("Bearer " + PreferencesHelper.getInstance().getToken(), id, post);
             call.enqueue(new Callback<Void>() {

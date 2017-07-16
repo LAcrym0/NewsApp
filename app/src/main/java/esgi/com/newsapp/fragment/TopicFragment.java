@@ -33,6 +33,7 @@ import esgi.com.newsapp.network.RetrofitSession;
 import esgi.com.newsapp.utils.PreferencesHelper;
 
 public class TopicFragment extends RootFragment {
+    private static final int TAG_TOPIC = 2;
 
     @BindView(R.id.progress)
     public ProgressBar progressBar;
@@ -173,7 +174,18 @@ public class TopicFragment extends RootFragment {
     }
 
     private void editTopicWithPosition(final int position) {
-        //todo implement news edition
+        fab.setVisibility(View.GONE);
+        FragmentManager fm = getActivity().getSupportFragmentManager();
+        Fragment editFragment = new EditFragment();
+        FragmentTransaction transaction = fm.beginTransaction();
+        Bundle bundle = new Bundle();
+        bundle.putString(getString(R.string.bundle_id), topicsList.get(position).getId());
+        bundle.putString(getString(R.string.bundle_content), topicsList.get(position).getContent());
+        bundle.putString(getString(R.string.bundle_title), topicsList.get(position).getTitle());
+        bundle.putInt(getString(R.string.bundle_type), TAG_TOPIC);
+        editFragment.setArguments(bundle);
+        transaction.addToBackStack(null).replace(R.id.main_act_frame_content, editFragment, DisplayTopicFragment.DISPLAY_TOPIC_TAG);
+        transaction.commit();
     }
 
     private void deleteTopicForPosition(final int position) {

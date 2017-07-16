@@ -2,6 +2,7 @@ package esgi.com.newsapp.network;
 
 import java.util.List;
 
+import esgi.com.newsapp.model.EditObject;
 import esgi.com.newsapp.model.News;
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -32,7 +33,7 @@ public interface INewsService {
 
     @PUT("/news/{id}/")
     @Headers("Content-Type: application/json")
-    Call<Void> editNews(@Header("Authorization") String token, @Path("id") String id, @Body News news);
+    Call<Void> editNews(@Header("Authorization") String token, @Path("id") String id, @Body EditObject news);
 
     @DELETE("/news/{id}/")
     @Headers("Content-Type: application/json")
