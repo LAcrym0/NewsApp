@@ -40,9 +40,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @BindView(R.id.fab)
     FloatingActionButton fab;
 
-    NewsFragment newsFragment;
-    EditUserFragment editUserFragment;
-    TopicFragment topicFragment;
+    private NewsFragment newsFragment;
+    private EditUserFragment editUserFragment;
+    private TopicFragment topicFragment;
 
     public final FragmentManager.OnBackStackChangedListener onBackStackChangedListener = new FragmentManager.OnBackStackChangedListener() {
         @Override

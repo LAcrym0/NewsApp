@@ -18,7 +18,7 @@ import retrofit2.http.Path;
  * Created by Grunt on 11/07/2017.
  */
 
-public interface INewsService {
+interface INewsService {
     @POST("/news/")
     @Headers("Content-Type: application/json")
     Call<Void> createNews(@Header("Authorization") String token, @Body News news);

@@ -3,6 +3,7 @@ package esgi.com.newsapp.network;
 import java.util.List;
 
 import esgi.com.newsapp.model.Auth;
+import esgi.com.newsapp.model.EditUser;
 import esgi.com.newsapp.model.User;
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -16,7 +17,7 @@ import retrofit2.http.PUT;
  * Created by Grunt on 28/06/2017.
  */
 
-public interface IUserService {
+interface IUserService {
     @POST("/auth/login/")
     @Headers("Content-Type: application/json")
     Call<String> login(@Body Auth auth);
@@ -35,5 +36,5 @@ public interface IUserService {
 
     @PUT("/users/i/")//todo remove "i/" when API will be fixed (tip)
     @Headers("Content-Type: application/json")
-    Call<User> editUser(@Header("Authorization") String token, @Body User user);
+    Call<User> editUser(@Header("Authorization") String token, @Body EditUser user);
 }

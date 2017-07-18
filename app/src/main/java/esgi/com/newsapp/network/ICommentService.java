@@ -19,7 +19,7 @@ import retrofit2.http.Query;
  * Created by Grunt on 11/07/2017.
  */
 
-public interface ICommentService {
+interface ICommentService {
     @POST("/comments/")
     @Headers("Content-Type: application/json")
     Call<Void> createComment(@Header("Authorization") String token, @Body Comment comment);

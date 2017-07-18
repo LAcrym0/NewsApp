@@ -6,6 +6,7 @@ import java.util.List;
 
 import esgi.com.newsapp.R;
 import esgi.com.newsapp.model.Auth;
+import esgi.com.newsapp.model.EditUser;
 import esgi.com.newsapp.utils.Network;
 import esgi.com.newsapp.utils.PreferencesHelper;
 import esgi.com.newsapp.utils.Utils;
@@ -189,7 +190,7 @@ public class UserService {
      * @param user the user object containing the fields to edit
      * @param callback the callback that returns nothing for a success or the return code + message for a failure
      */
-    public void editUser(User user, final ApiResult<User> callback) {
+    public void editUser(EditUser user, final ApiResult<User> callback) {
         if (Network.isConnectionAvailable()) {
             Call<User> call = this.userService.editUser("Bearer " + PreferencesHelper.getInstance().getToken(), user);
             call.enqueue(new Callback<User>() {

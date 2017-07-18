@@ -13,6 +13,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import esgi.com.newsapp.R;
+import esgi.com.newsapp.model.EditUser;
 import esgi.com.newsapp.model.User;
 import esgi.com.newsapp.network.ApiResult;
 import esgi.com.newsapp.network.RetrofitSession;
@@ -25,14 +26,13 @@ public class EditUserFragment extends RootFragment {
     @BindView(R.id.et_subscribe_email)
     EditText etEmail;
 
-    @BindView(R.id.et_subscribe_password)
-    EditText etPassword;
-
     @BindView(R.id.et_subscribe_lastname)
     EditText etLastname;
 
     @BindView(R.id.et_subscribe_firstname)
     EditText etFirstname;
+
+    private User oldUser;
 
     @Override
     public String getTitle() {
@@ -61,6 +61,7 @@ public class EditUserFragment extends RootFragment {
                 etEmail.setText(user.getEmail());
                 etFirstname.setText(user.getFirstname());
                 etLastname.setText(user.getLastname());
+                oldUser = user;
             }
 
             @Override
@@ -72,7 +73,7 @@ public class EditUserFragment extends RootFragment {
 
     @OnClick(R.id.btn_edit)
     public void editUser() {
-        User userToEdit = getUserFromForm();
+        EditUser userToEdit = getEditUserFromForm();
         RetrofitSession.getInstance().getUserService().editUser(userToEdit, new ApiResult<User>() {
             @Override
             public void success(User res) {
@@ -86,13 +87,11 @@ public class EditUserFragment extends RootFragment {
         });
     }
 
-    private User getUserFromForm() {
-        User newUser = new User();
-        newUser.setFirstname(etFirstname.getText().toString());
-        newUser.setLastname(etLastname.getText().toString());
-        newUser.setPassword(etPassword.getText().toString());
-        newUser.setEmail(etEmail.getText().toString());
-        return newUser;
+    private EditUser getEditUserFromForm() {
+        EditUser userToEdit = new EditUser();
+        userToEdit.setFirstname(etFirstname.getText().toString().length() == 0 ? oldUser.getFirstname() : etFirstname.getText().toString());
+        userToEdit.setLastname(etLastname.getText().toString().length() == 0 ? oldUser.getLastname() : etLastname.getText().toString());
+        return userToEdit;
     }
 
     public static EditUserFragment newInstance() {

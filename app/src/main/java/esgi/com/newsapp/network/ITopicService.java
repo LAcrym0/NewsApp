@@ -18,7 +18,7 @@ import retrofit2.http.Path;
  * Created by Grunt on 11/07/2017.
  */
 
-public interface ITopicService {
+interface ITopicService {
     @POST("/topics/")
     @Headers("Content-Type: application/json")
     Call<Void> createTopic(@Header("Authorization") String token, @Body Topic topic);

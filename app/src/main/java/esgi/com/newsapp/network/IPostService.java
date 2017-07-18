@@ -19,7 +19,7 @@ import retrofit2.http.Query;
  * Created by Grunt on 11/07/2017.
  */
 
-public interface IPostService {
+interface IPostService {
     @POST("/posts/")
     @Headers("Content-Type: application/json")
     Call<Void> createPost(@Header("Authorization") String token, @Body Post post);
