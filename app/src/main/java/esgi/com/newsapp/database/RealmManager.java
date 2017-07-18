@@ -18,6 +18,7 @@ public class RealmManager {
     private static PostDAO postDAO;
     private static NewsDAO newsDAO;
     private static CommentDAO commentDAO;
+    private static TokenDAO tokenDAO;
 
     public static Realm getRealmInstance() {
         return realm;
@@ -35,6 +36,7 @@ public class RealmManager {
         postDAO = new PostDAO();
         newsDAO = new NewsDAO();
         commentDAO = new CommentDAO();
+        tokenDAO = new TokenDAO();
     }
 
     public static TopicDAO getTopicDAO() {
@@ -51,5 +53,9 @@ public class RealmManager {
 
     public static CommentDAO getCommentDAO(){
         return commentDAO;
+    }
+
+    public static TokenDAO getTokenDAO() {
+        return tokenDAO;
     }
 }

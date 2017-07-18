@@ -144,7 +144,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
         else if (id == R.id.main_nav_disconnect) {
             PreferencesHelper.getInstance().setUserId("");
-            PreferencesHelper.getInstance().setToken("");
+            PreferencesHelper.getInstance().deleteToken();
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
             finish();
         }

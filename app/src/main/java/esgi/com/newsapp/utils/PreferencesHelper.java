@@ -3,6 +3,9 @@ package esgi.com.newsapp.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import esgi.com.newsapp.database.RealmManager;
+import esgi.com.newsapp.model.Token;
+
 /**
  * Created by Grunt on 28/06/2017.
  */
@@ -43,18 +46,25 @@ public class PreferencesHelper {
     }
 
     /**
-     * Method used to get the token from SharedPreferences
+     * Method used to get the token from the database
      * @return the String containing the token
      */
     public String getToken() {
-        return INSTANCE.sharedPreferences == null ? null : INSTANCE.sharedPreferences.getString(AUTH_TOKEN_NAME, null);
+        return RealmManager.getTokenDAO().getToken();
     }
 
     /**
-     * Method used to set the token into SharedPreferences
+     * Method used to set the token into the database
      */
     public void setToken(String authToken) {
-        INSTANCE.sharedPreferences.edit().putString(AUTH_TOKEN_NAME, authToken).apply();
+        RealmManager.getTokenDAO().save(new Token(authToken));
+    }
+
+    /**
+     * Method used to delete the token
+     */
+    public void deleteToken() {
+        RealmManager.getTokenDAO().deleteToken();
     }
 
     /**
