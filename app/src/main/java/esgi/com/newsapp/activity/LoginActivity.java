@@ -31,9 +31,6 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
 
-        //todo remove that, only for tests
-        email.setText("testeur2@gmail.com");
-        password.setText("password");
 
     }
 
