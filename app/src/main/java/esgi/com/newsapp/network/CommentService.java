@@ -29,6 +29,7 @@ public class CommentService {
     private static final int HTTP_200 = 200;
     private static final int HTTP_201 = 201;
     private static final int HTTP_204 = 204;
+    private static final int OFFLINE = -22;
 
     CommentService(Retrofit retrofit) {
         commentService = retrofit.create(ICommentService.class);
@@ -74,7 +75,7 @@ public class CommentService {
             });
         } else {
             RealmManager.getCommentDAO().createOrUpdateComment(comment);
-            callback.error(-22, "Créé en local");
+            callback.error(OFFLINE, "Créé en local");
         }
     }
 
